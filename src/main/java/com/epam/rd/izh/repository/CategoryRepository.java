@@ -7,9 +7,9 @@ import java.util.List;
 public interface CategoryRepository {
     List<Category> findAll();
 
-    boolean insert(Category category);
+    Category insert(Category category);
 
-    boolean update(Category category);
+    Category update(Category category);
 
     boolean deleteById(Long id);
 

@@ -1,5 +1,6 @@
 package com.epam.rd.izh.service;
 
+import com.epam.rd.izh.dto.TaskDto;
 import com.epam.rd.izh.entity.Task;
 import com.epam.rd.izh.repository.TaskRepository;
 import org.springframework.data.domain.Page;
@@ -16,25 +17,23 @@ public class TaskService {
         this.repository = repository;
     }
 
-
     public List<Task> findAll() {
         return repository.findAll();
     }
 
-    public boolean add(Task task) {
-        return repository.insert(task);
+    public Task add(TaskDto task) {
+        return repository.insert(task.toTask());
     }
 
-    public boolean update(Task task){
-        return repository.update(task);
+    public Task update(TaskDto task){
+        return repository.update(task.toTask());
     }
 
     public void deleteById(Long id){
         repository.deleteById(id);
     }
 
-
-    public Page findByParams(String text, Integer completed, Long priorityId, Long categoryId, PageRequest paging){
+    public Page<Task> findByParams(String text, Integer completed, Long priorityId, Long categoryId, PageRequest paging){
         return repository.findByParams(text, completed, priorityId, categoryId, paging);
     }
 

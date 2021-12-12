@@ -5,7 +5,11 @@ import com.epam.rd.izh.mapper.CategoryMapper;
 import com.epam.rd.izh.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
 
 public class CategoryRepositoryImpl implements CategoryRepository {
@@ -24,17 +28,32 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     }
 
     @Override
-    public boolean insert(Category category) {
+    public Category insert(Category category) {
         String sql = "insert into category (title) VALUES(?);";
 
-        return jdbcTemplate.update(sql , category.getTitle()) > 0;
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, category.getTitle());
+            return ps;
+        }, keyHolder);
+
+        return findById(keyHolder.getKey().longValue());
     }
 
     @Override
-    public boolean update(Category category) {
+    public Category update(Category category) {
         String sql = "update category set title = ? where category_id = ?;";
 
-        return jdbcTemplate.update(sql, category.getTitle(), category.getId()) > 0;
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, category.getTitle());
+            ps.setLong(2, category.getId());
+            return ps;
+        }, keyHolder);
+
+        return findById(keyHolder.getKey().longValue());
     }
 
     @Override

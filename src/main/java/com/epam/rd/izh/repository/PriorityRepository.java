@@ -8,9 +8,9 @@ public interface PriorityRepository {
 
     List<Priority> findAll();
 
-    boolean insert(Priority priority);
+    Priority insert(Priority priority);
 
-    boolean update(Priority priority);
+    Priority update(Priority priority);
 
     boolean deleteById(Long id);
 

@@ -11,9 +11,9 @@ public interface TaskRepository {
 
     List<Task> findAll();
 
-    boolean insert(Task task);
+    Task insert(Task task);
 
-    boolean update(Task task);
+    Task update(Task task);
 
     boolean deleteById(Long id);
 

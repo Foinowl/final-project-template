@@ -2,7 +2,6 @@ package com.epam.rd.izh.repository.impl;
 
 import com.epam.rd.izh.entity.Role;
 import com.epam.rd.izh.mapper.RoleMapper;
-import com.epam.rd.izh.mapper.StatMapper;
 import com.epam.rd.izh.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;

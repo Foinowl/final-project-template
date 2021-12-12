@@ -1,5 +1,6 @@
 package com.epam.rd.izh.service;
 
+import com.epam.rd.izh.dto.CategoryDto;
 import com.epam.rd.izh.entity.Category;
 import com.epam.rd.izh.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
@@ -15,17 +16,16 @@ public class CategoryService {
         this.repository = repository;
     }
 
-
     public List<Category> findAll() {
         return repository.findAll();
     }
 
-    public boolean add(Category category) {
-        return repository.insert(category);
+    public Category add(CategoryDto category) {
+        return repository.insert(category.toCategory());
     }
 
-    public boolean update(Category category){
-        return repository.update(category);
+    public Category update(CategoryDto category){
+        return repository.update(category.toCategory());
     }
 
     public void deleteById(Long id){

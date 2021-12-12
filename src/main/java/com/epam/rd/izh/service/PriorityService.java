@@ -1,5 +1,6 @@
 package com.epam.rd.izh.service;
 
+import com.epam.rd.izh.dto.PriorityDto;
 import com.epam.rd.izh.entity.Priority;
 import com.epam.rd.izh.repository.PriorityRepository;
 import org.springframework.stereotype.Service;
@@ -20,12 +21,12 @@ public class PriorityService {
         return repository.findAllByOrderByIdAsc();
     }
 
-    public boolean add(Priority priority) {
-        return repository.insert(priority);
+    public Priority add(PriorityDto priority) {
+        return repository.insert(priority.toPriority());
     }
 
-    public boolean update(Priority priority){
-        return repository.update(priority);
+    public Priority update(PriorityDto priority){
+        return repository.update(priority.toPriority());
     }
 
     public void deleteById(Long id){

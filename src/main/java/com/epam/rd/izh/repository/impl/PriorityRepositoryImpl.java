@@ -5,7 +5,10 @@ import com.epam.rd.izh.mapper.PriorityMapper;
 import com.epam.rd.izh.repository.PriorityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
+import java.sql.PreparedStatement;
 import java.util.List;
 
 public class PriorityRepositoryImpl implements PriorityRepository {
@@ -23,17 +26,34 @@ public class PriorityRepositoryImpl implements PriorityRepository {
     }
 
     @Override
-    public boolean insert(Priority priority) {
+    public Priority insert(Priority priority) {
         String sql = "insert into priority (title, color) VALUES(?, ?);";
 
-        return jdbcTemplate.update(sql, priority.getTitle(), priority.getColor()) > 0;
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, priority.getTitle());
+            ps.setString(2, priority.getColor());
+            return ps;
+        }, keyHolder);
+
+        return findById(keyHolder.getKey().longValue());
     }
 
     @Override
-    public boolean update(Priority priority) {
+    public Priority update(Priority priority) {
         String sql = "update priority set title = ?, color = ? where priority_id = ?;";
 
-        return jdbcTemplate.update(sql, priority.getTitle(), priority.getColor(), priority.getId()) > 0;
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, priority.getTitle());
+            ps.setString(2, priority.getColor());
+            ps.setLong(3, priority.getId());
+            return ps;
+        }, keyHolder);
+
+        return findById(keyHolder.getKey().longValue());
     }
 
     @Override
