@@ -9,7 +9,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.List;
 
 public class CategoryRepositoryImpl implements CategoryRepository {
@@ -24,7 +23,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     @Override
     public List<Category> findAll() {
         String sql = "select * from category;";
-        return  jdbcTemplate.query(sql, categoryMapper);
+        return jdbcTemplate.query(sql, categoryMapper);
     }
 
     @Override

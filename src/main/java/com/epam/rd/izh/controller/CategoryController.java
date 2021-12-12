@@ -4,10 +4,12 @@ import com.epam.rd.izh.dto.CategoryDto;
 import com.epam.rd.izh.dto.CategorySearchDto;
 import com.epam.rd.izh.entity.Category;
 import com.epam.rd.izh.service.CategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.epam.rd.izh.validations.ResponseErrorValidation;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ObjectUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,28 +22,51 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    public CategoryController(CategoryService categoryService) {
+    private final ResponseErrorValidation responseErrorValidation;
+
+    public CategoryController(CategoryService categoryService, ResponseErrorValidation responseErrorValidation) {
         this.categoryService = categoryService;
+        this.responseErrorValidation = responseErrorValidation;
     }
 
     @GetMapping("/all")
-    public List<CategoryDto> findAll() {
-        return categoryService
-                .findAll()
-                .stream()
-                .map(CategoryDto::fromCategory)
-                .collect(Collectors.toList());
+    public ResponseEntity<List<CategoryDto>> findAll() {
+        try {
+            return ResponseEntity.ok(categoryService
+                    .findAll()
+                    .stream()
+                    .map(CategoryDto::fromCategory)
+                    .collect(Collectors.toList()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity("not found records", HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
     @PostMapping("/add")
-    public ResponseEntity<CategoryDto> add(@RequestBody CategoryDto category) {
-        return ResponseEntity.ok(CategoryDto.fromCategory(categoryService.add(category)));
+    public ResponseEntity<Object> add(@RequestBody CategoryDto category, BindingResult bindingResult) {
+        ResponseEntity<Object> errors = responseErrorValidation.mapValidationService(bindingResult);
+        if (!ObjectUtils.isEmpty(errors)) return errors;
+
+        try{
+            return ResponseEntity.ok(CategoryDto.fromCategory(categoryService.add(category)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity("something wrong on the bd side", HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
-
     @PutMapping("/update")
-    public ResponseEntity update(@RequestBody CategoryDto category) {
-        return ResponseEntity.ok(categoryService.update(category));
+    public ResponseEntity update(@RequestBody CategoryDto category, BindingResult bindingResult) {
+        ResponseEntity<Object> errors = responseErrorValidation.mapValidationService(bindingResult);
+        if (!ObjectUtils.isEmpty(errors)) return errors;
+
+        try{
+            return ResponseEntity.ok(categoryService.update(category));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity("something wrong on the bd side", HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
 
@@ -74,11 +99,15 @@ public class CategoryController {
 
     @PostMapping("/search")
     public ResponseEntity<List<CategoryDto>> search(@RequestBody CategorySearchDto categorySearchDto){
-        return ResponseEntity.ok(
-                categoryService.findByTitle(categorySearchDto.getText())
-                        .stream()
-                        .map(CategoryDto::fromCategory)
-                        .collect(Collectors.toList())
-        );
+        try {
+            return ResponseEntity.ok(
+                    categoryService.findByTitle(categorySearchDto.getText())
+                            .stream()
+                            .map(CategoryDto::fromCategory)
+                            .collect(Collectors.toList()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity("not found records", HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 }

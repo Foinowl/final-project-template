@@ -4,12 +4,15 @@ import com.epam.rd.izh.dto.TaskDto;
 import com.epam.rd.izh.dto.TaskSearchDto;
 import com.epam.rd.izh.entity.Task;
 import com.epam.rd.izh.service.TaskService;
+import com.epam.rd.izh.validations.ResponseErrorValidation;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ObjectUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,43 +23,67 @@ import java.util.stream.Collectors;
 @RequestMapping("/task")
 public class TaskController {
     private final TaskService taskService;
+    private final ResponseErrorValidation responseErrorValidation;
 
-    public TaskController(TaskService taskService) {
+
+    public TaskController(TaskService taskService, ResponseErrorValidation responseErrorValidation) {
         this.taskService = taskService;
+        this.responseErrorValidation = responseErrorValidation;
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<TaskDto>> findAll() {
-        return ResponseEntity.ok(
-                taskService
-                        .findAll()
-                        .stream()
-                        .map(TaskDto::fromTask)
-                        .collect(Collectors.toList())
-        );
+        try {
+            return ResponseEntity.ok(
+                    taskService
+                            .findAll()
+                            .stream()
+                            .map(TaskDto::fromTask)
+                            .collect(Collectors.toList())
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity("not found records", HttpStatus.NOT_ACCEPTABLE);
+
+        }
     }
 
     @PostMapping("/add")
-    public ResponseEntity<TaskDto> add(@RequestBody TaskDto task) {
-        return ResponseEntity.ok(TaskDto.fromTask(taskService.add(task)));
+    public ResponseEntity<Object> add(@RequestBody TaskDto task, BindingResult bindingResult) {
+        ResponseEntity<Object> errors = responseErrorValidation.mapValidationService(bindingResult);
+        if (!ObjectUtils.isEmpty(errors)) return errors;
+        try {
+            return ResponseEntity.ok(TaskDto.fromTask(taskService.add(task)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity("something wrong on the bd side", HttpStatus.NOT_ACCEPTABLE);
+
+        }
 
     }
 
     @PutMapping("/update")
-    public ResponseEntity<TaskDto> update(@RequestBody TaskDto task) {
+    public ResponseEntity<Object> update(@RequestBody TaskDto task, BindingResult bindingResult) {
+        ResponseEntity<Object> errors = responseErrorValidation.mapValidationService(bindingResult);
+        if (!ObjectUtils.isEmpty(errors)) return errors;
 
-        taskService.update(task);
+        try {
+            taskService.update(task);
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity("something wrong on the bd side", HttpStatus.NOT_ACCEPTABLE);
 
-        return new ResponseEntity(HttpStatus.OK);
+        }
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity delete(@PathVariable Long id) {
         try {
             taskService.deleteById(id);
-        }catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
-            return new ResponseEntity("id="+id+" not found", HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
         }
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -66,14 +93,14 @@ public class TaskController {
 
         Task task = null;
 
-        try{
+        try {
             task = taskService.findById(id);
-        }catch (NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             e.printStackTrace();
-            return new ResponseEntity("id="+id+" not found", HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return  ResponseEntity.ok(TaskDto.fromTask(task));
+        return ResponseEntity.ok(TaskDto.fromTask(task));
     }
 
 
@@ -100,7 +127,14 @@ public class TaskController {
 
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sort);
 
-        Page<Task> result = taskService.findByParams(text, completed, priorityId, categoryId, pageRequest);
+        Page<Task> result = null;
+        try {
+            result = taskService.findByParams(text, completed, priorityId, categoryId, pageRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity("something wrong on the bd side", HttpStatus.NOT_ACCEPTABLE);
+
+        }
 
         return ResponseEntity.ok(result);
 

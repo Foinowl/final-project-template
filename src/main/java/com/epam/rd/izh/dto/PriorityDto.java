@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
 @Component
 @Builder
 @AllArgsConstructor
@@ -14,7 +17,9 @@ import org.springframework.stereotype.Component;
 @Data
 public class PriorityDto {
     private Long id;
+    @NotEmpty(message = "empty field")
     private String title;
+    @NotEmpty(message = "empty field")
     private String color;
 
     public Priority toPriority() {

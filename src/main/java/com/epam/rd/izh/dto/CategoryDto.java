@@ -8,6 +8,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
 @Component
 @Builder
 @AllArgsConstructor
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Component;
 @Data
 public class CategoryDto {
     private Long id;
+    @NotEmpty(message = "empty field")
     private String title;
     private Long completedCount;
     private Long uncompletedCount;
