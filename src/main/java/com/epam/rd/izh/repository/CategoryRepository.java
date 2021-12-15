@@ -1,9 +1,11 @@
 package com.epam.rd.izh.repository;
 
 import com.epam.rd.izh.entity.Category;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface CategoryRepository {
     List<Category> findAll();
 

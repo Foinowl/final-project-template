@@ -1,9 +1,16 @@
 package com.epam.rd.izh.controller;
 
-import com.epam.rd.izh.entity.AuthorizedUser;
-import com.epam.rd.izh.repository.UserRepository;
+import com.epam.rd.izh.dto.AuthorizedUserDto;
+import com.epam.rd.izh.dto.LoginUserDto;
+import com.epam.rd.izh.entity.Role;
+
 import javax.validation.Valid;
+
+import com.epam.rd.izh.service.RoleService;
+import com.epam.rd.izh.service.UserService;
+import com.epam.rd.izh.validations.ResponseErrorValidation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +20,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * В аргументы контроллеров, которые обрабатывают запросы, можно указать дополнительные входные параметры: Например:
@@ -24,10 +35,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class AuthenticationController {
 
   @Autowired
-  UserRepository userRepository;
+  UserService userService;
+
+  @Autowired
+  RoleService roleService;
 
   @Autowired
   private PasswordEncoder passwordEncoder;
+
+  @Autowired
+  ResponseErrorValidation responseErrorValidation;
 
   /**
    * Метод, отвечающий за логику авторизации пользователя.
@@ -45,6 +62,10 @@ public class AuthenticationController {
        */
       model.addAttribute("error_login_placeholder", "invalid login or password!");
     }
+
+    if(!model.containsAttribute("authorizationForm")){
+      model.addAttribute("authorizationForm", new LoginUserDto());
+    }
     /**
      * Контроллер возвращает String название JSP страницы.
      * В application.properties есть следующие строки:
@@ -60,50 +81,41 @@ public class AuthenticationController {
    */
   @GetMapping("/registration")
   public String viewRegistration(Model model) {
+    Map<String, String> mapRoles = roleService
+            .getAllRoles()
+            .stream()
+            .collect(Collectors.toMap(Role::getTitle, Role::getTitle));
+
+    model.addAttribute("roles", mapRoles);
+    model.addAttribute("errors", new HashMap<>());
+
+
     if(!model.containsAttribute("registrationForm")){
-      model.addAttribute("registrationForm", new AuthorizedUser());
+      model.addAttribute("registrationForm", new AuthorizedUserDto());
     }
-    return "registration";
+    return "register";
   }
 
   /**
    * Метод, отвечающий за подтверждение регистрации пользователя и сохранение данных в репозиторий или DAO.
    */
   @PostMapping("/registration/proceed")
-  public String processRegistration(@Valid @ModelAttribute("registrationForm") AuthorizedUser registeredUser,
+  public String processRegistration(@Valid @ModelAttribute("registrationForm") AuthorizedUserDto registeredUser,
       BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
-    /**
-     * Здесь по желанию можно добавить валидацию введенных данных на back-end слое.
-     * Для этого необходимо написать реализацию Validator.
-     */
-    //registeredUser.validate(registeredUserDto, bindingResult);
 
     if (bindingResult.hasErrors()) {
-      //логика отображения ошибки, не является обязательной
-      //...
-      //...
-      return "redirect:/registration";
-    }
-    /**
-     * Здесь происходит присвоение роли пользователю и шифрование пароля.
-     * Роль может быть так же определена пользователем на этапе регистрации, либо иным способов, зависящим
-     * от темы финального проекта.
-     * registeredUser может быть DTO объектом, преобразуемым в AuthorizedUser сущность в сервисе-маппере
-     * (эот сервис нужно написать самим), вместе с присвоением роли и шифрованием пароля.
-     */
-    registeredUser.setRole("User");
-    registeredUser.setPassword(passwordEncoder.encode(registeredUser.getPassword()));
+        ResponseEntity<Object> errors = responseErrorValidation.mapValidationService(bindingResult);
+        redirectAttributes.addFlashAttribute("errors", errors.getBody());
+      redirectAttributes.addFlashAttribute("registrationForm", registeredUser);
 
-    /**
-     * Добавление пользователя в репозиторий или в базу данных через CRUD операции DAO.
-     * Рекомендуется вынести эту логику на сервисный слой.
-     */
-    userRepository.addAuthorizedUser(registeredUser);
+      return "redirect:/registration";
+      }
+
+    userService.addAuthorizedUser(userService.getAuthorizedUser(registeredUser));
     /**
      * В случае успешной регистрации редирект можно настроить на другой энд пойнт.
      */
     return "redirect:/login";
   }
-
 }

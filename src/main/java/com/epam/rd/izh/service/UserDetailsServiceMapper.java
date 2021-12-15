@@ -38,7 +38,7 @@ public class UserDetailsServiceMapper implements UserDetailsService {
   @Override
   public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
 
-    AuthorizedUser authorizedUserDto = userRepository.getAuthorizedUserByLogin(login);
+    AuthorizedUser authorizedUserDto = userRepository.getUserByLogin(login);
     Set<GrantedAuthority> roles = new HashSet<>();
     roles.add(new SimpleGrantedAuthority(authorizedUserDto.getRole()));
 

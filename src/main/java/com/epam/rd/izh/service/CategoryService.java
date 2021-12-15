@@ -3,6 +3,7 @@ package com.epam.rd.izh.service;
 import com.epam.rd.izh.dto.CategoryDto;
 import com.epam.rd.izh.entity.Category;
 import com.epam.rd.izh.repository.CategoryRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public class CategoryService {
 
     private final CategoryRepository repository;
 
-    public CategoryService(CategoryRepository repository) {
+    public CategoryService(@Qualifier("categoryRepositoryImpl") CategoryRepository repository) {
         this.repository = repository;
     }
 

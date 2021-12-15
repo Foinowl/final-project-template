@@ -3,6 +3,7 @@ package com.epam.rd.izh.service;
 import com.epam.rd.izh.dto.TaskDto;
 import com.epam.rd.izh.entity.Task;
 import com.epam.rd.izh.repository.TaskRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,8 @@ import java.util.List;
 public class TaskService {
     private final TaskRepository repository;
 
-    public TaskService(TaskRepository repository) {
+
+    public TaskService(@Qualifier("taskRepositoryImpl") TaskRepository repository) {
         this.repository = repository;
     }
 

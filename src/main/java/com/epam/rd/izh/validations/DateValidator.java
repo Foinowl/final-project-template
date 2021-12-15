@@ -1,16 +1,17 @@
 package com.epam.rd.izh.validations;
 
 import com.epam.rd.izh.annotations.DateMatches;
+import org.springframework.stereotype.Component;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.time.LocalDate;
 import java.time.Period;
 
+@Component
 public class DateValidator implements ConstraintValidator<DateMatches, String> {
     @Override
     public void initialize(DateMatches constraintAnnotation) {
-
     }
 
     @Override
@@ -22,7 +23,6 @@ public class DateValidator implements ConstraintValidator<DateMatches, String> {
         LocalDate nowDate = LocalDate.now();
         LocalDate parseDate = LocalDate.parse(date);
 
-        Period period = Period.between(nowDate, parseDate);
-        return (Math.abs(period.getDays()) / 12) >= 18;
+        return Period.between(parseDate, nowDate).getYears() >= 18;
     }
 }

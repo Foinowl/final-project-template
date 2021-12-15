@@ -1,50 +1,100 @@
 package com.epam.rd.izh.repository;
 
 import com.epam.rd.izh.entity.AuthorizedUser;
-import java.util.ArrayList;
-import java.util.List;
+import com.epam.rd.izh.mapper.UserMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.springframework.stereotype.Repository;
-
-/**
- * Данный репозиторий хранит список зарегистрированных пользователей;
- * На данный момент он представляет из себя коллекцию List<AuthorizedUser> и методы доступа к ней;
- *
- * Необходимо превратить данный репозиторий в DAO класс:
- * Создать базу данных, подключить ее к приложению, сделать CRUD операции (или их часть) для доступа
- * к хранящимся сущностям.
- * Создать другие DAO классы для хранения бизнес-сущностей выбранной темы финального проекта в этом же пакете.
- */
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class UserRepository {
   private final List<AuthorizedUser> users = new ArrayList<>();
 
-  /**
-   * В данном методе использована библиотека Stream API:
-   * .filter проверяет каждый элемент коллекции на удовлетворение условия .equals(login), в случае, если совпадающий
-   * элемент будет найдет, он будет возвращен методом .findFirst(). Если в коллекции не будет найдет удовлетворяющий
-   * условию элемент, методом .orElse(null) будет возвращен null.
-   * Допускается использовать вместо  Stream API стандартные циклы For и While.
-   *
-   * аннотации @Nullable и @Nonnull расставляются над возвращающими не примитивные значения методами и передаваемыми
-   * в метод аргументами.
-   */
+  private final JdbcTemplate jdbcTemplate;
 
-  @Nullable
-  public AuthorizedUser getAuthorizedUserByLogin(@Nonnull String login) {
-    return users.stream()
-        .filter(value -> value.getLogin().equals(login))
-        .findFirst().orElse(null);
+  private final UserMapper userMapper;
+
+  private final RoleRepository roleRepository;
+
+  public UserRepository(JdbcTemplate jdbcTemplate, UserMapper userMapper, RoleRepository roleRepository) {
+    this.jdbcTemplate = jdbcTemplate;
+    this.userMapper = userMapper;
+    this.roleRepository = roleRepository;
   }
 
-  public boolean addAuthorizedUser(@Nullable AuthorizedUser user) {
+  @Nullable
+  public AuthorizedUser getUserByLogin(@Nonnull String login) {
+    String sql = "SELECT * FROM i_user as u where u.login = ?";
+
+    AuthorizedUser authorizedUser = jdbcTemplate.queryForObject(sql, new Object[]{login}, userMapper);
+
+    return authorizedUser;
+  }
+
+  @Nullable
+  public AuthorizedUser getUserById(@Nonnull Long id) {
+    String sql = "SELECT * FROM i_user as u where u.user_id = ?";
+
+    AuthorizedUser authorizedUser = jdbcTemplate.queryForObject(sql, new Object[]{id}, userMapper);
+
+    return authorizedUser;
+  }
+
+  public long getUserIdByLogin(@Nonnull String login) {
+    String query_getAuthorizedUserByLogin = "SELECT u.id from i_user as u where u.login = ?";
+
+    return jdbcTemplate.queryForObject(query_getAuthorizedUserByLogin, new Object[]{login}, Long.class);
+  }
+
+  public boolean addUser(@Nullable AuthorizedUser user) {
+
     if (user != null) {
-      users.add(user);
-      return true;
+
+      Long roleId = roleRepository.getRoleIdByTitle(user.getRole());
+
+      String sql = "insert into i_user " +
+              "(first_name, middle_name, last_name, date_birth, login, passwords, role_id) " +
+              "VALUES (?, ?, ?, ?, ?, ?, ?);";
+
+      return jdbcTemplate.update(
+              sql,
+              user.getFirstName(),
+              user.getMiddleName(),
+              user.getLastName(),
+              user.getDateBirth(),
+              user.getLogin(),
+              user.getPassword(),
+              roleId
+      ) > 0;
     }
     return false;
+  }
+
+  public List<AuthorizedUser> getAllUsers() {
+    String sql = "select " +
+            "us.user_id, " +
+            "first_name, " +
+            "middle_name, " +
+            "last_name , " +
+            "date_birth, " +
+            "login, " +
+            "passwords, " +
+            "role.title from " +
+            "i_user as us " +
+            "left join role " +
+            "on us.role_id = role.role_id";
+    return jdbcTemplate.query(sql, userMapper);
+  }
+
+  public boolean deleteUser(long idUser){
+    String sql = "DELETE FROM i_user WHERE i_user.user_id=?";
+
+    return jdbcTemplate.update(
+            sql, idUser
+    ) > 0;
   }
 }

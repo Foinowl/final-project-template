@@ -5,7 +5,9 @@ import com.epam.rd.izh.mapper.StatMapper;
 import com.epam.rd.izh.repository.StatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class StatRepositoryImpl implements StatRepository {
 
     @Autowired

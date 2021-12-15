@@ -3,6 +3,7 @@ package com.epam.rd.izh.service;
 import com.epam.rd.izh.dto.PriorityDto;
 import com.epam.rd.izh.entity.Priority;
 import com.epam.rd.izh.repository.PriorityRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public class PriorityService {
 
     private final PriorityRepository repository;
 
-    public PriorityService(PriorityRepository repository) {
+    public PriorityService(@Qualifier("priorityRepositoryImpl") PriorityRepository repository) {
         this.repository = repository;
     }
 
