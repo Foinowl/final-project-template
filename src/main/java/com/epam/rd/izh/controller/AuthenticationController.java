@@ -7,6 +7,7 @@ import com.epam.rd.izh.entity.Role;
 import javax.validation.Valid;
 
 import com.epam.rd.izh.service.RoleService;
+import com.epam.rd.izh.service.SecurityService;
 import com.epam.rd.izh.service.UserService;
 import com.epam.rd.izh.validations.ResponseErrorValidation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,88 +35,93 @@ import java.util.stream.Collectors;
 @Controller
 public class AuthenticationController {
 
-  @Autowired
-  UserService userService;
+    @Autowired
+    UserService userService;
 
-  @Autowired
-  RoleService roleService;
+    @Autowired
+    RoleService roleService;
 
-  @Autowired
-  private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-  @Autowired
-  ResponseErrorValidation responseErrorValidation;
+    @Autowired
+    ResponseErrorValidation responseErrorValidation;
 
-  /**
-   * Метод, отвечающий за логику авторизации пользователя.
-   * /login - определяет URL, по которому пользователь должен перейти, чтобы запустить данный метод-обработчик.
-   */
-  @GetMapping("/login")
-  public String login(Model model, @RequestParam(required = false) String error) {
-    if (error != null) {
-      /**
-       * Model представляет из себя Map коллекцию ключ-значения, распознаваемую View элементами MVC.
-       * Добавляется String "invalid login or password!", с ключем "error_login_placeholder".
-       * При создании View шаблона плейсхолдер ${error_login_placeholder} будет заменен на переданное значение.
-       *
-       * В класс Model можно передавать любые объекты, необходимые для генерации View.
-       */
-      model.addAttribute("error_login_placeholder", "invalid login or password!");
-    }
 
-    if(!model.containsAttribute("authorizationForm")){
-      model.addAttribute("authorizationForm", new LoginUserDto());
-    }
+    @Autowired
+    SecurityService securityService;
+
+
     /**
-     * Контроллер возвращает String название JSP страницы.
-     * В application.properties есть следующие строки:
-     * spring.mvc.view.prefix=/WEB-INF/pages/
-     * spring.mvc.view.suffix=.jsp
-     * Spring MVC, используя суффикс и префикс, создаст итоговый путь к JSP: /WEB-INF/pages/login.jsp
+     * Метод, отвечающий за логику авторизации пользователя.
+     * /login - определяет URL, по которому пользователь должен перейти, чтобы запустить данный метод-обработчик.
      */
-    return "login";
-  }
+    @GetMapping("/login")
+    public String login(Model model, @RequestParam(required = false) String error) {
+        if (error != null) {
+            /**
+             * Model представляет из себя Map коллекцию ключ-значения, распознаваемую View элементами MVC.
+             * Добавляется String "invalid login or password!", с ключем "error_login_placeholder".
+             * При создании View шаблона плейсхолдер ${error_login_placeholder} будет заменен на переданное значение.
+             *
+             * В класс Model можно передавать любые объекты, необходимые для генерации View.
+             */
+            model.addAttribute("error_login_placeholder", "invalid login or password!");
+        }
 
-  /**
-   * Метод, отвечающий за логику регистрации пользователя.
-   */
-  @GetMapping("/registration")
-  public String viewRegistration(Model model) {
-    Map<String, String> mapRoles = roleService
-            .getAllRoles()
-            .stream()
-            .collect(Collectors.toMap(Role::getTitle, Role::getTitle));
-
-    model.addAttribute("roles", mapRoles);
-    model.addAttribute("errors", new HashMap<>());
-
-
-    if(!model.containsAttribute("registrationForm")){
-      model.addAttribute("registrationForm", new AuthorizedUserDto());
+        if (!model.containsAttribute("authorizationForm")) {
+            model.addAttribute("authorizationForm", new LoginUserDto());
+        }
+        /**
+         * Контроллер возвращает String название JSP страницы.
+         * В application.properties есть следующие строки:
+         * spring.mvc.view.prefix=/WEB-INF/pages/
+         * spring.mvc.view.suffix=.jsp
+         * Spring MVC, используя суффикс и префикс, создаст итоговый путь к JSP: /WEB-INF/pages/login.jsp
+         */
+        return "login";
     }
-    return "register";
-  }
 
-  /**
-   * Метод, отвечающий за подтверждение регистрации пользователя и сохранение данных в репозиторий или DAO.
-   */
-  @PostMapping("/registration/proceed")
-  public String processRegistration(@Valid @ModelAttribute("registrationForm") AuthorizedUserDto registeredUser,
-      BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-
-
-    if (bindingResult.hasErrors()) {
-        ResponseEntity<Object> errors = responseErrorValidation.mapValidationService(bindingResult);
-        redirectAttributes.addFlashAttribute("errors", errors.getBody());
-      redirectAttributes.addFlashAttribute("registrationForm", registeredUser);
-
-      return "redirect:/registration";
-      }
-
-    userService.addAuthorizedUser(userService.getAuthorizedUser(registeredUser));
     /**
-     * В случае успешной регистрации редирект можно настроить на другой энд пойнт.
+     * Метод, отвечающий за логику регистрации пользователя.
      */
-    return "redirect:/login";
-  }
+    @GetMapping("/registration")
+    public String viewRegistration(Model model) {
+        Map<String, String> mapRoles = roleService
+                .getAllRoles()
+                .stream()
+                .collect(Collectors.toMap(Role::getTitle, Role::getTitle));
+
+        model.addAttribute("roles", mapRoles);
+
+        if (!model.containsAttribute("registrationForm")) {
+            model.addAttribute("registrationForm", new AuthorizedUserDto());
+        }
+        if (!model.containsAttribute("errors")) {
+            model.addAttribute("errors", new HashMap<>());
+        }
+        return "register";
+    }
+
+    /**
+     * Метод, отвечающий за подтверждение регистрации пользователя и сохранение данных в репозиторий или DAO.
+     */
+    @PostMapping("/registration/proceed")
+    public String processRegistration(@Valid @ModelAttribute("registrationForm") AuthorizedUserDto registeredUser,
+                                      BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+
+
+        if (bindingResult.hasErrors()) {
+            ResponseEntity<Object> errors = responseErrorValidation.mapValidationService(bindingResult);
+            redirectAttributes.addFlashAttribute("errors", errors.getBody());
+            redirectAttributes.addFlashAttribute("registrationForm", registeredUser);
+
+            return "redirect:/registration";
+        }
+
+        userService.addAuthorizedUser(userService.getAuthorizedUser(registeredUser));
+
+        securityService.autoLogin(registeredUser.getLogin(), registeredUser.getPassword());
+        return "redirect:/";
+    }
 }

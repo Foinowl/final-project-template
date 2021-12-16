@@ -1,6 +1,7 @@
 package com.epam.rd.izh.dto;
 
 import com.epam.rd.izh.annotations.DateMatches;
+import com.epam.rd.izh.annotations.UniqueLogin;
 import com.epam.rd.izh.entity.AuthorizedUser;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,6 +30,7 @@ public class AuthorizedUserDto {
     @NotEmpty(message = "date birth must be filled in")
     @DateMatches
     private String dateBirth;
+    @UniqueLogin
     @Size(min = 3, message = "login must be greater than 3")
     private String login;
     @Size(min = 8, message = "password must be greater than 8")
@@ -36,7 +38,7 @@ public class AuthorizedUserDto {
     @NotEmpty(message = "fill role")
     private String role;
 
-    public AuthorizedUser toUser(){
+    public AuthorizedUser toUser() {
         return AuthorizedUser.builder()
                 .id(id)
                 .firstName(firstName)

@@ -20,4 +20,22 @@ public class IndexController {
     return "index";
   }
 
+  @GetMapping("/admin-dashboard")
+  public String admin(Authentication authentication, Model model) {
+    Message greetingMessage = new Message();
+    greetingMessage.setMessage(ENG_GREETING + authentication.getName());
+
+    model.addAttribute("message", greetingMessage.getMessage());
+    return "admin";
+  }
+
+  @GetMapping("/user-dashboard")
+  public String dashboardTodo(Authentication authentication, Model model) {
+    Message greetingMessage = new Message();
+    greetingMessage.setMessage(ENG_GREETING + authentication.getName());
+
+    model.addAttribute("message", greetingMessage.getMessage());
+    return "todo";
+  }
+
 }

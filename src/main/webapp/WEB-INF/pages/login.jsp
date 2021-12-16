@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
 <html lang="en">
@@ -13,16 +14,16 @@
 	<body>
 		<div class="auth">
 			<h1 class="auth__title">Login</h1>
-			<p class="auth__text">No have an account? <a href="#">Sign un</a></p>
-			<form class="auth__form" action="login/process" method="post" modelAttribute="authorizationForm">
+			<p class="auth__text">No have an account? <a href="/registration">Sign up</a></p>
+			<form:form class="auth__form" action="login/process" method="post" modelAttribute="authorizationForm">
 				<div class="line__input">
-					<input class="input__block" type="text" id="login" required />
+					<form:input path="login" id="login" class="input__block" type="text" required="true" />
 					<label for="login">Login</label>
 
 					<span></span>
 				</div>
 				<div class="line__input">
-					<input class="input__block" type="password" id="password" required />
+					<form:input path="password" id="password" class="input__block" type="password" required="true" />
 					<label for="password">Password</label>
 
 					<span></span>
@@ -33,7 +34,9 @@
 				<div class="line__input">
 					<input class="input__block input__block--submit" type="submit" />
 				</div>
-			</form>
+			</form:form>
 		</div>
 	</body>
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+	<script src="../../js/login.js"></script>
 </html>

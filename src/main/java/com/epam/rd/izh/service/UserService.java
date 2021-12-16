@@ -36,10 +36,15 @@ public class UserService {
 
     public boolean isLoginAvailable(String login) {
 
-        AuthorizedUser user = userRepository.getUserByLogin(login);
+        AuthorizedUser user = getUserByLogin(login);
 
         return user == null;
 
+    }
+
+    @Nullable
+    public AuthorizedUser getUserByLogin(String login) {
+        return userRepository.getUserByLogin(login);
     }
 
     @Nullable

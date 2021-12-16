@@ -1,9 +1,11 @@
 package com.epam.rd.izh.config;
 
+import com.epam.rd.izh.service.UrlAuthenticationSuccessHandlerMapper;
 import com.epam.rd.izh.service.UserDetailsServiceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -35,8 +38,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login").anonymous()
                 .antMatchers("/registration").permitAll()
                 .antMatchers("/registration/**").permitAll()
-                .antMatchers("/dashboard/").hasAuthority("USER")
-                .antMatchers("/dashboard/**").hasAuthority("USER")
+                .antMatchers("/user-dashboard").hasAuthority("USER")
+                .antMatchers("/user-dashboard").hasAuthority("USER")
                 .antMatchers("/admin-dashboard/").hasAuthority("ADMIN")
                 .antMatchers("/admin-dashboard/**").hasAuthority("ADMIN")
 
@@ -71,7 +74,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .loginPage("/login")
                 .loginProcessingUrl("/login/process")
-                .defaultSuccessUrl("/")
+                .successHandler(authenticationSuccessHandler())
                 .failureUrl("/login?error")
                 .usernameParameter("login")
                 .passwordParameter("password")
@@ -102,6 +105,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return authProvider;
     }
 
+    @Bean
+    public AuthenticationManager customAuthenticationManager() throws Exception {
+        return authenticationManager();
+    }
+
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
+
     /**
      * Механизм шифрования пароля, реализующий интерфейс PasswordEncoder. В данном примере использован
      * BCryptPasswordEncoder, можно написать свою реализацию, создав собственный класс шифрования.
@@ -110,4 +123,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler(){
+        return new UrlAuthenticationSuccessHandlerMapper();
+    }
+
 }

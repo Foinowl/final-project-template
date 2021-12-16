@@ -20,8 +20,8 @@ public class UserMapper implements RowMapper<AuthorizedUser> {
                 .middleName(rs.getString("middle_name"))
                 .lastName(rs.getString("last_name"))
                 .login(rs.getString("login"))
-                .password(rs.getString("password"))
-                .role(rs.getString("role"))
+                .password(rs.getString("passwords"))
+                .role(rs.getString("title"))
                 .build();
     }
 }

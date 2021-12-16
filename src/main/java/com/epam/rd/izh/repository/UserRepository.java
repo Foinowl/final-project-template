@@ -2,6 +2,7 @@ package com.epam.rd.izh.repository;
 
 import com.epam.rd.izh.entity.AuthorizedUser;
 import com.epam.rd.izh.mapper.UserMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -28,16 +29,19 @@ public class UserRepository {
 
   @Nullable
   public AuthorizedUser getUserByLogin(@Nonnull String login) {
-    String sql = "SELECT * FROM i_user as u where u.login = ?";
+    String sql = "SELECT * from i_user as u left join role on role.role_id = u.role_id where u.login = ?";
 
-    AuthorizedUser authorizedUser = jdbcTemplate.queryForObject(sql, new Object[]{login}, userMapper);
-
-    return authorizedUser;
+    try {
+      AuthorizedUser authorizedUser = jdbcTemplate.queryForObject(sql, new Object[]{login}, userMapper);
+      return authorizedUser;
+    } catch (EmptyResultDataAccessException e) {
+      return null;
+    }
   }
 
   @Nullable
   public AuthorizedUser getUserById(@Nonnull Long id) {
-    String sql = "SELECT * FROM i_user as u where u.user_id = ?";
+    String sql = "SELECT * from i_user as u left join role on role.role_id = u.role_id where u.user_id = ?";
 
     AuthorizedUser authorizedUser = jdbcTemplate.queryForObject(sql, new Object[]{id}, userMapper);
 
@@ -45,7 +49,7 @@ public class UserRepository {
   }
 
   public long getUserIdByLogin(@Nonnull String login) {
-    String query_getAuthorizedUserByLogin = "SELECT u.id from i_user as u where u.login = ?";
+    String query_getAuthorizedUserByLogin = "SELECT u.id from i_user as u left join role on role.role_id = u.role_id where u.login = ?";
 
     return jdbcTemplate.queryForObject(query_getAuthorizedUserByLogin, new Object[]{login}, Long.class);
   }

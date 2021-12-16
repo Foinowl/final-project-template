@@ -17,7 +17,7 @@ CREATE TABLE i_user
 	date_birth DATE NOT NULL,
 	login VARCHAR(40) NOT NULL,
 	passwords VARCHAR(80) NOT NULL,
-	role_id INT NOT NULL UNIQUE,
+	role_id INT NOT NULL,
 	
 	CONSTRAINT PK_i_user_user_id PRIMARY KEY(user_id),
 	CONSTRAINT FK_i_user_role_id FOREIGN KEY(role_id) REFERENCES role(role_id)
@@ -88,9 +88,9 @@ BEGIN
 	
 -- 	updating the table stat when depending on column "completed"
 	if (coalesce(NEW.completed, 0)=1) then
-		update stat set completed_total = (coalesce(completed_total, 0) + 1) where id=1;
+		update stat set completed_total = (coalesce(completed_total, 0) + 1) where stat.stat_id=1;
 	else 
-		update stat set uncompleted_total = (coalesce(uncompleted_total, 0) + 1) where id=1;
+		update stat set uncompleted_total = (coalesce(uncompleted_total, 0) + 1) where stat.stat_id=1;
 	end if;
  
     RETURN NEW;
@@ -143,7 +143,7 @@ BEGIN
 --  changed the table of category for the unchanged column 'completed=1'
     IF (  
 		coalesce(old.completed,0) = coalesce(new.completed,0)    and
-		coalesce.completed=1       and
+        new.completed=1       and
 		coalesce(old.category_id,0) <> coalesce(new.category_id,0)    
 	) THEN    
     
@@ -246,3 +246,5 @@ CREATE TRIGGER task_delete_trigger
   ON task
   FOR EACH ROW
   EXECUTE PROCEDURE task_delete_trigger_fn();
+  
+ insert into role (title) values ('ADMIN'), ('USER');
