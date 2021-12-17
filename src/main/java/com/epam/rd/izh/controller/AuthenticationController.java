@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import com.epam.rd.izh.service.RoleService;
 import com.epam.rd.izh.service.SecurityService;
+import com.epam.rd.izh.service.StatService;
 import com.epam.rd.izh.service.UserService;
 import com.epam.rd.izh.validations.ResponseErrorValidation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,9 @@ public class AuthenticationController {
 
     @Autowired
     SecurityService securityService;
+
+    @Autowired
+    StatService statService;
 
 
     /**
@@ -108,6 +112,7 @@ public class AuthenticationController {
 
         userService.addAuthorizedUser(userService.getAuthorizedUser(registeredUser));
 
+        statService.createStatForUser(registeredUser.getId());
         securityService.autoLogin(registeredUser.getLogin(), registeredUser.getPassword());
         return "redirect:/";
     }

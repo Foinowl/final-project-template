@@ -12,6 +12,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.util.List;
 
@@ -36,7 +37,8 @@ public class TaskRepositoryImpl implements TaskRepository {
                 "c.title as titleCategory, " +
                 "u.login as loginUser, " +
                 "p.color as color, " +
-                "t.date as dateTask " +
+                "t.date as dateTask, " +
+                "t.title as title " +
                 "from task as t " +
                 "left join i_user as u " +
                 "on t.user_id = u.user_id " +
@@ -60,7 +62,8 @@ public class TaskRepositoryImpl implements TaskRepository {
                 "c.title as titleCategory, " +
                 "u.login as loginUser, " +
                 "p.color as color, " +
-                "t.date as dateTask " +
+                "t.date as dateTask, " +
+                "t.title as title " +
                 "from task as t " +
                 "left join i_user as u " +
                 "on t.user_id = u.user_id " +
@@ -75,16 +78,16 @@ public class TaskRepositoryImpl implements TaskRepository {
     @Override
     public Task insert(Task task) {
 
-        String sql = "insert into task (title, completed, priority_id, category_id, user_id) VALUES(?, ?, ?, ?, ?);";
+        String sql = "insert into task (title, priority_id, category_id, user_id, date) VALUES(?, ?, ?, ?, ?);";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(sql);
+            PreparedStatement ps = connection.prepareStatement(sql, new String[] {"task_id"});
             ps.setString(1, task.getTitle());
-            ps.setInt(2, task.getCompleted());
-            ps.setLong(3, task.getIdPriority());
-            ps.setLong(4, task.getIdCategory());
-            ps.setLong(5, task.getIdUser());
+            ps.setLong(2, task.getIdPriority());
+            ps.setLong(3, task.getIdCategory());
+            ps.setLong(4, task.getIdUser());
+            ps.setDate(5, Date.valueOf(task.getDate()));
 
             return ps;
         }, keyHolder);
@@ -98,7 +101,7 @@ public class TaskRepositoryImpl implements TaskRepository {
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(sql);
+            PreparedStatement ps = connection.prepareStatement(sql, new String[] {"task_id"});
             ps.setString(1, task.getTitle());
             ps.setInt(2, task.getCompleted());
             ps.setLong(3, task.getIdPriority());
@@ -128,7 +131,8 @@ public class TaskRepositoryImpl implements TaskRepository {
                 "c.title as titleCategory, " +
                 "u.login as loginUser, " +
                 "p.color as color, " +
-                "t.date as dateTask " +
+                "t.date as dateTask, " +
+                "t.title as title " +
                 "from task as t " +
                 "left join i_user as u " +
                 "on t.user_id = u.user_id " +
@@ -163,7 +167,8 @@ public class TaskRepositoryImpl implements TaskRepository {
                 "c.title as titleCategory, " +
                 "u.login as loginUser, " +
                 "p.color as color, " +
-                "t.date as dateTask " +
+                "t.date as dateTask, " +
+                "t.title as title " +
                 "from task as t " +
                 "left join i_user as u " +
                 "on t.user_id = u.user_id " +
@@ -179,5 +184,4 @@ public class TaskRepositoryImpl implements TaskRepository {
     private int count() {
         return jdbcTemplate.queryForObject("SELECT count(*) FROM task", Integer.class);
     }
-
 }

@@ -4,10 +4,7 @@ import static com.epam.rd.izh.util.StringConstants.ENG_GREETING;
 
 import com.epam.rd.izh.dto.*;
 import com.epam.rd.izh.entity.Task;
-import com.epam.rd.izh.service.CategoryService;
-import com.epam.rd.izh.service.StatService;
-import com.epam.rd.izh.service.TaskService;
-import com.epam.rd.izh.service.UserService;
+import com.epam.rd.izh.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -33,6 +30,9 @@ public class IndexController {
 
   @Autowired
   StatService statService;
+
+  @Autowired
+  PriorityService priorityService;
 
 //  @GetMapping("/")
 //  public String login(Authentication authentication, Model model) {
@@ -61,6 +61,7 @@ public class IndexController {
     List<TaskDto> taskDtoList = null;
     List<CategoryDto> categoryDtoList = null;
     StatDto statDto = null;
+    List<PriorityDto> priorityDtoList = null;
     try {
       taskDtoList = taskService.findAllTaskByUserId(authorizedUserDto.getId())
               .stream()
@@ -69,8 +70,14 @@ public class IndexController {
 
       categoryDtoList = categoryService.findAll()
               .stream()
-              .filter(category -> category.getUserLogin().equals(login))
+              .filter(category -> login.equals(category.getUserLogin()))
               .map(CategoryDto::fromCategory)
+              .collect(Collectors.toList());
+
+      priorityDtoList = priorityService
+              .findAll()
+              .stream()
+              .map(PriorityDto::fromPriority)
               .collect(Collectors.toList());
 
       statDto = StatDto.fromStat(statService.findById(authorizedUserDto.getId()));
@@ -81,7 +88,7 @@ public class IndexController {
     model.addAttribute("taskList", taskDtoList);
     model.addAttribute("categoryList", categoryDtoList);
     model.addAttribute("stat", statDto);
-
+    model.addAttribute("priorityList", priorityDtoList);
     return "todo";
   }
 

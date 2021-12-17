@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
@@ -57,14 +57,14 @@
                         <p class="not-found">Ничего не найдено</p>
                     </div> -->
 
-                    <li class="nav-item category">
-                        <c:forEach var="category" items="${categoryList}" >
+                    <li class="nav-item category" id="listCategory" style="padding-bottom: 65px;">
+                        <c:forEach var="category" items="${categoryList}">
                             <a class="nav-link">
                                 <!--          название категории-->
                                 <span class="category-title">${category.title}</span>
 
-<%--                                <!--         кнопка редактирования категории-->--%>
-<%--                                <span class="edit-category-icon-area"> </span>--%>
+                                    <%--                                <!--         кнопка редактирования категории-->--%>
+                                    <%--                                <span class="edit-category-icon-area"> </span>--%>
 
                                 <div style="display: inline-block;">
                                     <span class="completed-count">${category.completedCount}</span>
@@ -86,7 +86,7 @@
                     <li class=""><a href="#">About</a></li>
                     <li>
                         <div class="header__user">
-                            <span class="header__user-name">${user.login}</span>
+                            <span class="header__user-name" data-user="${user.id}">${user.login}</span>
                             <span class="header__arrow">
 										<i class="fas fa-arrow-down"></i>
 									</span>
@@ -265,20 +265,21 @@
         data-animation="slideInOutLeft"
         data-modal
 >
-    <div class="modal-dialog">
+    <div class="modal-dialog" data-="">
         <header class="modal-header">
             <h1>Добавление категории</h1>
         </header>
         <section class="modal-content">
             <div class="modal-row">
                 <input
+                        data-input="title"
                         class="input-element input-element--modal"
                         maxlength="256"
                         placeholder="Название категории"
                 />
             </div>
             <div class="row" id="buttonModal">
-                <button class="create-button">Добавить задачу</button>
+                <button class="create-button" id="createCategory">Добавить задачу</button>
                 <button
                         class="create-button create-button--outline close-modal"
                         aria-label="close modal"
@@ -299,6 +300,7 @@
         <section class="modal-content">
             <div class="modal-row">
                 <input
+                        data-input="title"
                         class="input-element input-element--modal"
                         maxlength="256"
                         placeholder="Название задачи"
@@ -306,33 +308,38 @@
             </div>
             <div class="modal-row">
                 <select
+                        data-input="idCategory"
                         class="task__form-select"
                         id="categoryTask"
                         name="категория"
                         style="width: 100%"
                 >
                     <option disabled selected value="">Выберите категорию</option>
-                    <option value="au">Australia</option>
-                    <option value="ca">Canada</option>
-                    <option value="usa">USA</option>
+                    <c:forEach var="category" items="${categoryList}">
+                        <option value="${category.id}">${category.title}</option>
+                    </c:forEach>
                 </select>
             </div>
             <div class="modal-row">
                 <select
+                        data-input="idPriority"
                         class="task__form-select"
                         id="prioritetTask"
                         name="приоритет"
                         style="width: 100%"
                 >
                     <option disabled selected value="">Выберите приоритет</option>
-                    <option value="au">Australia</option>
-                    <option value="ca">Canada</option>
-                    <option value="usa">USA</option>
+
+                    <c:forEach var="prioritet" items="${priorityList}">
+                        <option value="${prioritet.id}">${prioritet.title}</option>
+                    </c:forEach>
                 </select>
+
             </div>
 
             <div class="modal-row">
                 <input
+                        data-input="date"
                         class="input-element input-element--modal"
                         type="date"
                         id="date"
@@ -340,7 +347,7 @@
                 />
             </div>
             <div class="row">
-                <button class="create-button">Добавить задачу</button>
+                <button class="create-button" id="createTask">Добавить задачу</button>
                 <button
                         class="create-button create-button--outline close-modal"
                         aria-label="close modal"

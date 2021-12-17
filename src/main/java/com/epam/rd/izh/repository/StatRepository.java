@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 public interface StatRepository {
 
     Stat findById(Long id);
+
+    boolean createStat(Long id);
 }

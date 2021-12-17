@@ -1,8 +1,9 @@
--- insert into i_user(first_name, middle_name, last_name, date_birth, login, passwords, role_id)
+
 -- password: admin1admin1
 -- password: admin2admin2
--- values ('Ivan', 'Petrovich', 'Petrov', '2000-01-23', 'admin1', '$2a$10$IfzJDncYwZvjXNkgGqzKEOM06LzF7yBfO/f5jVTgEkFkE3XzaTsje', 2),
---        ('Ivan', 'Petrovich', 'Petrov', '2000-01-23', 'admin2', '$2a$10$i69Wh7r2TIOCkyagrRzv2emppyJ4RUiWRakWQMj22mGsyqSFgCsRW', 2);
+insert into i_user(first_name, middle_name, last_name, date_birth, login, passwords, role_id)
+values ('Ivan', 'Petrovich', 'Petrov', '2000-01-23', 'admin1', '$2a$10$IfzJDncYwZvjXNkgGqzKEOM06LzF7yBfO/f5jVTgEkFkE3XzaTsje', 2),
+       ('Ivan', 'Petrovich', 'Petrov', '2000-01-23', 'admin2', '$2a$10$i69Wh7r2TIOCkyagrRzv2emppyJ4RUiWRakWQMj22mGsyqSFgCsRW', 2);
 
 insert into stat (completed_total, uncompleted_total, user_id)
 values (0, 0, 1),

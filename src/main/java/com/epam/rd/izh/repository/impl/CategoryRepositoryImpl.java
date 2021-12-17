@@ -38,14 +38,16 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
     @Override
     public Category insert(Category category) {
-        String sql = "insert into category (title) VALUES(?);";
+        String sql = "insert into category (title, user_id) VALUES(?, ?);";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(sql);
+            PreparedStatement ps = connection.prepareStatement(sql, new String[] {"category_id"});
             ps.setString(1, category.getTitle());
+            ps.setLong(2, category.getIdUser());
             return ps;
         }, keyHolder);
+
 
         return findById(keyHolder.getKey().longValue());
     }
@@ -56,7 +58,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(sql);
+            PreparedStatement ps = connection.prepareStatement(sql, new String[] {"category_id"});
             ps.setString(1, category.getTitle());
             ps.setLong(2, category.getId());
             return ps;

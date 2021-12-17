@@ -64,7 +64,7 @@ CREATE TABLE task
 (
     task_id     SERIAL,
     title       VARCHAR(60) NOT NULL,
-    completed   int         not null CHECK (completed = 0 or completed = 1),
+    completed   int         not null CHECK (completed = 0 or completed = 1) default 0,
     date        TIMESTAMP,
     priority_id INT         NOT NULL,
     category_id INT         NOT NULL,

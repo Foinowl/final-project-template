@@ -17,6 +17,6 @@ public class Category {
     private Long completedCount;
     private Long uncompletedCount;
 
-    private Long userId;
+    private Long idUser;
     private String userLogin;
 }

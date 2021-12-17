@@ -23,7 +23,7 @@ public class CategoryDto {
     private Long completedCount;
     private Long uncompletedCount;
 
-    private Long userId;
+    private Long idUser;
     private String userLogin;
 
     public Category toCategory() {
@@ -32,7 +32,7 @@ public class CategoryDto {
                 .title(title)
                 .completedCount(completedCount)
                 .uncompletedCount(uncompletedCount)
-                .userId(userId)
+                .idUser(idUser)
                 .userLogin(userLogin)
                 .build();
     }
@@ -43,7 +43,7 @@ public class CategoryDto {
                 .title(category.getTitle())
                 .completedCount(category.getCompletedCount())
                 .uncompletedCount(category.getUncompletedCount())
-                .userId(category.getUserId())
+                .idUser(category.getIdUser())
                 .userLogin(category.getUserLogin())
                 .build();
     }

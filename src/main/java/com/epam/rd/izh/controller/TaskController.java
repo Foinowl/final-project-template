@@ -57,9 +57,7 @@ public class TaskController {
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity("something wrong on the bd side", HttpStatus.NOT_ACCEPTABLE);
-
         }
-
     }
 
     @PutMapping("/update")

@@ -30,4 +30,9 @@ public class StatRepositoryImpl implements StatRepository {
                         "on u.user_id = stat.user_id where stat.user_id = ?",
                 new Object[]{id}, statMapper);
     }
+
+    @Override
+    public boolean createStat(Long id) {
+        return jdbcTemplate.update("insert into stat (user_id) values(?)", new Object[]{id}) > 0;
+    }
 }

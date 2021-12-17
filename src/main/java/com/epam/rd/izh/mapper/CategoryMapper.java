@@ -18,7 +18,7 @@ public class CategoryMapper implements RowMapper<Category> {
                 .completedCount(rs.getLong("completed_count"))
                 .uncompletedCount(rs.getLong("uncompleted_count"))
                 .userLogin(rs.getString("userLogin"))
-                .userId(rs.getLong("userId"))
+                .idUser(rs.getLong("userId"))
                 .build();
     }
 }

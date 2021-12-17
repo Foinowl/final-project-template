@@ -21,4 +21,8 @@ public class StatService {
         return repository.findById(id);
     }
 
+    public boolean createStatForUser(Long id) {
+        return repository.createStat(id);
+    }
+
 }

@@ -17,6 +17,7 @@ public class TaskMapper implements RowMapper<Task> {
     public Task mapRow(ResultSet rs, int i) throws SQLException {
         return Task.builder()
                 .id(rs.getLong("taskId"))
+                .title(rs.getString("title"))
                 .completed(rs.getInt("completed"))
                 .idCategory(rs.getLong("categoryId"))
                 .idPriority(rs.getLong("priorityId"))
