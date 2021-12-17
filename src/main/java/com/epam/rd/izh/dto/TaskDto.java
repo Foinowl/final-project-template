@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotEmpty;
+import java.time.LocalDate;
+import java.util.Date;
 
 @Component
 @Builder
@@ -27,6 +29,12 @@ public class TaskDto {
     private Long idCategory;
     @NotEmpty(message = "empty field")
     private Long idUser;
+    private LocalDate date;
+
+    private String titlePriority;
+    private String titleCategory;
+    private String loginUser;
+    private String color;
 
     public Task toTask() {
         return Task.builder()
@@ -36,6 +44,11 @@ public class TaskDto {
                 .idPriority(idPriority)
                 .idCategory(idCategory)
                 .idUser(idUser)
+                .titlePriority(titlePriority)
+                .titleCategory(titleCategory)
+                .loginUser(loginUser)
+                .color(color)
+                .date(date)
                 .build();
     }
 
@@ -47,6 +60,11 @@ public class TaskDto {
                 .idPriority(task.getIdPriority())
                 .idCategory(task.getIdCategory())
                 .idUser(task.getIdUser())
+                .titlePriority(task.getTitlePriority())
+                .titleCategory(task.getTitleCategory())
+                .loginUser(task.getLoginUser())
+                .color(task.getColor())
+                .date(task.getDate())
                 .build();
     }
 }

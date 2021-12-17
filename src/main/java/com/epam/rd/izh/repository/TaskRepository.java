@@ -13,6 +13,8 @@ public interface TaskRepository {
 
     List<Task> findAll();
 
+    List<Task> findAllByUserId(Long id);
+
     Task insert(Task task);
 
     Task update(Task task);

@@ -39,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/registration").permitAll()
                 .antMatchers("/registration/**").permitAll()
                 .antMatchers("/user-dashboard").hasAuthority("USER")
-                .antMatchers("/user-dashboard").hasAuthority("USER")
+                .antMatchers("/user-dashboard/**").hasAuthority("USER")
                 .antMatchers("/admin-dashboard/").hasAuthority("ADMIN")
                 .antMatchers("/admin-dashboard/**").hasAuthority("ADMIN")
 

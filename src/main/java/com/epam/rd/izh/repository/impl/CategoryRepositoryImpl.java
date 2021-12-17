@@ -24,7 +24,15 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
     @Override
     public List<Category> findAll() {
-        String sql = "select * from category;";
+        String sql = "select " +
+                "category_id, " +
+                "title, " +
+                "completed_count, " +
+                "uncompleted_count, " +
+                "u.login as userLogin, " +
+                "u.user_id as userId " +
+                "from category as c left join i_user as u " +
+                "on u.user_id = c.user_id;";
         return jdbcTemplate.query(sql, categoryMapper);
     }
 
@@ -64,24 +72,46 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
     @Override
     public List<Category> findByTitle(String text) {
-        String sql = "select * from category " +
-                "where (title is null or " +
-                "title = '' or " +
-                "lower(title) like lower(%?%)) " +
-                "order by title asc;";
+        String sql = "select " +
+                "category_id, " +
+                "title, " +
+                "completed_count, " +
+                "uncompleted_count, " +
+                "u.login as userLogin, " +
+                "u.user_id as userId " +
+                "from category category as c left join i_user as u on c.user_id = u.user_id" +
+                "where (c.title is null or " +
+                "c.title = '' or " +
+                "lower(c.title) like lower(%?%)) " +
+                "order by c.title asc;";
         return jdbcTemplate.query(sql, new Object[]{text}, categoryMapper);
     }
 
     @Override
     public Category findById(Long id) {
-        String sql = "select * from category where category_id = ?;";
+        String sql = "select " +
+                "category_id, " +
+                "title, " +
+                "completed_count, " +
+                "uncompleted_count, " +
+                "u.login as userLogin, " +
+                "u.user_id as userId " +
+                "from category as c left join i_user as u on c.user_id = u.user_id where category_id = ?;";
 
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, categoryMapper);
     }
 
     @Override
     public List<Category> findAllByOrderByTitleAsc() {
-        String sql = "select * from category order by title asc;";
+        String sql = "select " +
+                "category_id, " +
+                "title, " +
+                "completed_count, " +
+                "uncompleted_count, " +
+                "u.login as userLogin, " +
+                "u.user_id as userId " +
+                "from category as c left join i_user as u on c.user_id = u.user_id order by c.title asc;";
+
 
         return jdbcTemplate.query(sql, categoryMapper);
     }

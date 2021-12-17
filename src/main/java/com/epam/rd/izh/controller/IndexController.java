@@ -2,23 +2,46 @@ package com.epam.rd.izh.controller;
 
 import static com.epam.rd.izh.util.StringConstants.ENG_GREETING;
 
-import com.epam.rd.izh.dto.Message;
+import com.epam.rd.izh.dto.*;
+import com.epam.rd.izh.entity.Task;
+import com.epam.rd.izh.service.CategoryService;
+import com.epam.rd.izh.service.StatService;
+import com.epam.rd.izh.service.TaskService;
+import com.epam.rd.izh.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Controller
 public class IndexController {
 
-  @GetMapping("/")
-  public String login(Authentication authentication, Model model) {
-    Message greetingMessage = new Message();
-    greetingMessage.setMessage(ENG_GREETING + authentication.getName());
 
-    model.addAttribute("message", greetingMessage.getMessage());
-    return "index";
-  }
+  @Autowired
+  UserService userService;
+
+  @Autowired
+  TaskService taskService;
+
+  @Autowired
+  CategoryService categoryService;
+
+  @Autowired
+  StatService statService;
+
+//  @GetMapping("/")
+//  public String login(Authentication authentication, Model model) {
+//    Message greetingMessage = new Message();
+//    greetingMessage.setMessage(ENG_GREETING + authentication.getName());
+//
+//    model.addAttribute("message", greetingMessage.getMessage());
+//    return "index";
+//  }
 
   @GetMapping("/admin-dashboard")
   public String admin(Authentication authentication, Model model) {
@@ -31,10 +54,34 @@ public class IndexController {
 
   @GetMapping("/user-dashboard")
   public String dashboardTodo(Authentication authentication, Model model) {
-    Message greetingMessage = new Message();
-    greetingMessage.setMessage(ENG_GREETING + authentication.getName());
+    String login = authentication.getName();
 
-    model.addAttribute("message", greetingMessage.getMessage());
+    AuthorizedUserDto authorizedUserDto = userService.getAuthorizedUserDto(login);
+
+    List<TaskDto> taskDtoList = null;
+    List<CategoryDto> categoryDtoList = null;
+    StatDto statDto = null;
+    try {
+      taskDtoList = taskService.findAllTaskByUserId(authorizedUserDto.getId())
+              .stream()
+              .map(TaskDto::fromTask)
+              .collect(Collectors.toList());
+
+      categoryDtoList = categoryService.findAll()
+              .stream()
+              .filter(category -> category.getUserLogin().equals(login))
+              .map(CategoryDto::fromCategory)
+              .collect(Collectors.toList());
+
+      statDto = StatDto.fromStat(statService.findById(authorizedUserDto.getId()));
+    } catch (RuntimeException e) {
+      e.printStackTrace();
+    }
+    model.addAttribute("user", authorizedUserDto);
+    model.addAttribute("taskList", taskDtoList);
+    model.addAttribute("categoryList", categoryDtoList);
+    model.addAttribute("stat", statDto);
+
     return "todo";
   }
 

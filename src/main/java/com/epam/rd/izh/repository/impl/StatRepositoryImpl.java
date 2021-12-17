@@ -18,6 +18,16 @@ public class StatRepositoryImpl implements StatRepository {
 
     @Override
     public Stat findById(Long id) {
-        return jdbcTemplate.queryForObject("select * from stat where stat_id = ?", new Object[]{id}, statMapper);
+        return jdbcTemplate.queryForObject("select " +
+                        "stat_id, " +
+                        "completed_total, " +
+                        "uncompleted_total, " +
+                        "u.login as login, " +
+                        "stat.user_id as user_id " +
+                        "from " +
+                        "stat left join i_user " +
+                        "as u " +
+                        "on u.user_id = stat.user_id where stat.user_id = ?",
+                new Object[]{id}, statMapper);
     }
 }

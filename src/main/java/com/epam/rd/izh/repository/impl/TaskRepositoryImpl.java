@@ -16,8 +16,7 @@ import java.sql.PreparedStatement;
 import java.util.List;
 
 @Repository
-public class TaskRepositoryImpl implements TaskRepository
-{
+public class TaskRepositoryImpl implements TaskRepository {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
@@ -26,9 +25,51 @@ public class TaskRepositoryImpl implements TaskRepository
 
     @Override
     public List<Task> findAll() {
-        String sql = "select * from task;";
 
+        String sql = "select " +
+                "task_id as taskId, " +
+                "completed as completed, " +
+                "t.category_id as categoryId, " +
+                "t.priority_id as priorityId, " +
+                "t.user_id as userId, " +
+                "p.title as titlePriority, " +
+                "c.title as titleCategory, " +
+                "u.login as loginUser, " +
+                "p.color as color, " +
+                "t.date as dateTask " +
+                "from task as t " +
+                "left join i_user as u " +
+                "on t.user_id = u.user_id " +
+                "left join category as c " +
+                "on c.category_id  = t.category_id " +
+                "left join priority as p " +
+                "on p.priority_id = t.priority_id";
         return jdbcTemplate.query(sql, taskMapper);
+    }
+
+    @Override
+    public List<Task> findAllByUserId(Long id) {
+
+        String sql = "select " +
+                "task_id as taskId, " +
+                "completed as completed, " +
+                "t.category_id as categoryId, " +
+                "t.priority_id as priorityId, " +
+                "t.user_id as userId, " +
+                "p.title as titlePriority, " +
+                "c.title as titleCategory, " +
+                "u.login as loginUser, " +
+                "p.color as color, " +
+                "t.date as dateTask " +
+                "from task as t " +
+                "left join i_user as u " +
+                "on t.user_id = u.user_id " +
+                "left join category as c " +
+                "on c.category_id  = t.category_id " +
+                "left join priority as p " +
+                "on p.priority_id = t.priority_id " +
+                "where u.user_id = ?";
+        return jdbcTemplate.query(sql, new Object[]{id}, taskMapper);
     }
 
     @Override
@@ -77,16 +118,33 @@ public class TaskRepositoryImpl implements TaskRepository
 
     @Override
     public Page<Task> findByParams(String title, Integer completed, Long priorityId, Long categoryId, Pageable pageable) {
-        String sql = "select * from task " +
-                "where (lower(title) like %?%) and " +
-                "completed = ?, " +
-                "priority_id = ?, " +
-                "category_id = ? " +
-                "order by task_id ? limit ? offset ? ;";
+        String sql = "select " +
+                "task_id as taskId, " +
+                "completed as completed, " +
+                "t.category_id as categoryId, " +
+                "t.priority_id as priorityId, " +
+                "t.user_id as userId, " +
+                "p.title as titlePriority, " +
+                "c.title as titleCategory, " +
+                "u.login as loginUser, " +
+                "p.color as color, " +
+                "t.date as dateTask " +
+                "from task as t " +
+                "left join i_user as u " +
+                "on t.user_id = u.user_id " +
+                "left join category as c " +
+                "on c.category_id  = t.category_id " +
+                "left join priority as p " +
+                "on p.priority_id = t.priority_id" +
+                "where (lower(t.title) like %?%) and " +
+                "t.completed = ?, " +
+                "t.priority_id = ?, " +
+                "t.category_id = ? " +
+                "order by t.task_id ? limit ? offset ? ;";
 
         String dir = pageable.getSort().toList().get(0).getDirection().name();
 
-        List<Task> taskList= jdbcTemplate.query(sql, new Object[]{
+        List<Task> taskList = jdbcTemplate.query(sql, new Object[]{
                 title, completed, priorityId, categoryId, dir, pageable.getPageSize(), pageable.getOffset()
         }, taskMapper);
 
@@ -95,7 +153,26 @@ public class TaskRepositoryImpl implements TaskRepository
 
     @Override
     public Task findById(Long id) {
-        return jdbcTemplate.queryForObject("select * from task where task_id = ?", new Object[]{id}, taskMapper);
+        String sql = "select " +
+                "task_id as taskId, " +
+                "completed as completed, " +
+                "t.category_id as categoryId, " +
+                "t.priority_id as priorityId, " +
+                "t.user_id as userId, " +
+                "p.title as titlePriority, " +
+                "c.title as titleCategory, " +
+                "u.login as loginUser, " +
+                "p.color as color, " +
+                "t.date as dateTask " +
+                "from task as t " +
+                "left join i_user as u " +
+                "on t.user_id = u.user_id " +
+                "left join category as c " +
+                "on c.category_id  = t.category_id " +
+                "left join priority as p " +
+                "on p.priority_id = t.priority_id " +
+                "where t.task_id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, taskMapper);
 
     }
 

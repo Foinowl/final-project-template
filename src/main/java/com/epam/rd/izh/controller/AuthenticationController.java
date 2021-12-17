@@ -59,26 +59,13 @@ public class AuthenticationController {
     @GetMapping("/login")
     public String login(Model model, @RequestParam(required = false) String error) {
         if (error != null) {
-            /**
-             * Model представляет из себя Map коллекцию ключ-значения, распознаваемую View элементами MVC.
-             * Добавляется String "invalid login or password!", с ключем "error_login_placeholder".
-             * При создании View шаблона плейсхолдер ${error_login_placeholder} будет заменен на переданное значение.
-             *
-             * В класс Model можно передавать любые объекты, необходимые для генерации View.
-             */
             model.addAttribute("error_login_placeholder", "invalid login or password!");
         }
 
         if (!model.containsAttribute("authorizationForm")) {
             model.addAttribute("authorizationForm", new LoginUserDto());
         }
-        /**
-         * Контроллер возвращает String название JSP страницы.
-         * В application.properties есть следующие строки:
-         * spring.mvc.view.prefix=/WEB-INF/pages/
-         * spring.mvc.view.suffix=.jsp
-         * Spring MVC, используя суффикс и префикс, создаст итоговый путь к JSP: /WEB-INF/pages/login.jsp
-         */
+
         return "login";
     }
 

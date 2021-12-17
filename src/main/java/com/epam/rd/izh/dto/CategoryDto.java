@@ -23,12 +23,17 @@ public class CategoryDto {
     private Long completedCount;
     private Long uncompletedCount;
 
+    private Long userId;
+    private String userLogin;
+
     public Category toCategory() {
         return Category.builder()
                 .id(id)
                 .title(title)
                 .completedCount(completedCount)
                 .uncompletedCount(uncompletedCount)
+                .userId(userId)
+                .userLogin(userLogin)
                 .build();
     }
 
@@ -38,6 +43,8 @@ public class CategoryDto {
                 .title(category.getTitle())
                 .completedCount(category.getCompletedCount())
                 .uncompletedCount(category.getUncompletedCount())
+                .userId(category.getUserId())
+                .userLogin(category.getUserLogin())
                 .build();
     }
 }

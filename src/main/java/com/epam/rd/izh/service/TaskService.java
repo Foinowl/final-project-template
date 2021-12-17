@@ -14,13 +14,16 @@ import java.util.List;
 public class TaskService {
     private final TaskRepository repository;
 
-
     public TaskService(@Qualifier("taskRepositoryImpl") TaskRepository repository) {
         this.repository = repository;
     }
 
     public List<Task> findAll() {
         return repository.findAll();
+    }
+
+    public List<Task> findAllTaskByUserId(Long id) {
+        return repository.findAllByUserId(id);
     }
 
     public Task add(TaskDto task) {

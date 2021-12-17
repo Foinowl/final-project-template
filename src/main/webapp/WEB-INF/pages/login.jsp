@@ -25,8 +25,8 @@
 				<div class="line__input">
 					<form:input path="password" id="password" class="input__block" type="password" required="true" />
 					<label for="password">Password</label>
-
-					<span></span>
+					<form:errors path="password"></form:errors>
+					<span>${param.error}</span>
 				</div>
 				<div class="line__input--error">
 					${error_login_placeholder}

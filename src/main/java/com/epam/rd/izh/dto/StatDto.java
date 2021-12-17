@@ -17,11 +17,16 @@ public class StatDto {
     private Long completedTotal;
     private Long uncompletedTotal;
 
+    private Long userId;
+    private String userTitle;
+
     public Stat toStat() {
         return Stat.builder()
                 .id(id)
                 .completedTotal(completedTotal)
                 .uncompletedTotal(uncompletedTotal)
+                .userId(userId)
+                .userTitle(userTitle)
                 .build();
     }
 
@@ -30,6 +35,8 @@ public class StatDto {
                 .id(stat.getId())
                 .completedTotal(stat.getCompletedTotal())
                 .uncompletedTotal(stat.getUncompletedTotal())
+                .userId(stat.getUserId())
+                .userTitle(stat.getUserTitle())
                 .build();
     }
 }
