@@ -117,4 +117,19 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
         return jdbcTemplate.query(sql, categoryMapper);
     }
+
+    @Override
+    public List<Category> findAllByUserId(Long id) {
+        String sql = "select " +
+                "category_id, " +
+                "title, " +
+                "completed_count, " +
+                "uncompleted_count, " +
+                "u.login as userLogin, " +
+                "u.user_id as userId " +
+                "from category as c left join i_user as u " +
+                "on u.user_id = c.user_id " +
+                "where u.user_id = ?";
+        return jdbcTemplate.query(sql, new Object[] {id}, categoryMapper);
+    }
 }

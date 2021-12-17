@@ -20,4 +20,6 @@ public interface CategoryRepository {
     Category findById(Long id);
 
     List<Category> findAllByOrderByTitleAsc();
+
+    List<Category> findAllByUserId(Long id);
 }

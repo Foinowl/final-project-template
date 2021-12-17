@@ -24,4 +24,6 @@ public interface TaskRepository {
     Page<Task> findByParams(String title, Integer completed, Long priorityId, Long categoryId, Pageable pageable);
 
     Task findById(Long id);
+
+    Task updateCompleted(Task task);
 }

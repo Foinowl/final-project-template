@@ -34,8 +34,8 @@ public class TaskService {
         return repository.update(task.toTask());
     }
 
-    public void deleteById(Long id){
-        repository.deleteById(id);
+    public boolean deleteById(Long id){
+        return repository.deleteById(id);
     }
 
     public Page<Task> findByParams(String text, Integer completed, Long priorityId, Long categoryId, PageRequest paging){

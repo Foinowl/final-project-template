@@ -25,6 +25,10 @@ public class CategoryService {
         return repository.insert(category.toCategory());
     }
 
+    public List<Category> findAllByUserId(Long id) {
+        return repository.findAllByUserId(id);
+    }
+
     public Category update(CategoryDto category){
         return repository.update(category.toCategory());
     }

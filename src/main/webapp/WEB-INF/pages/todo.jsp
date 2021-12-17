@@ -215,12 +215,12 @@
                             <div class="col col-5">${task.titlePriority}</div>
                             <div class="col col-6">${task.titleCategory}</div>
                             <div class="col col-7">
-                                        <span class="task__span">
+                                        <span class="task__span" data-task="${task.id}">
                                             <i class="fas fa-trash"></i>
                                         </span>
                             </div>
                             <div class="col col-8">
-                                        <span class="task__span">
+                                        <span class="task__span" data-task="${task.id}">
                                             <i class="fas fa-edit"></i>
                                         </span>
                             </div>
@@ -233,7 +233,7 @@
                                         value="yes"
                                 />
 
-                                <label for="complete${task.id}"></label>
+                                <label for="complete${task.id}" data-task="${task.id}"></label>
                             </div>
                         </li>
                     </c:forEach>
@@ -359,6 +359,78 @@
         </section>
     </div>
 </div>
+
+
+<div
+        class="modal"
+        id="editTask"
+        data-animation="slideInOutLeft"
+        data-modal
+>
+    <div class="modal-dialog" data-="">
+        <header class="modal-header">
+            <h1>Редактирование задачи</h1>
+        </header>
+        <section class="modal-content">
+            <div class="modal-row">
+                <input
+                        data-input="title"
+                        class="input-element input-element--modal"
+                        maxlength="256"
+                        placeholder="Название задачи"
+                />
+            </div>
+            <div class="modal-row">
+                <select
+                        data-input="idCategory"
+                        class="task__form-select"
+                        name="категория"
+                        style="width: 100%"
+                >
+                    <option disabled selected value="">Выберите категорию</option>
+<%--                    <c:forEach var="category" items="${categoryList}">--%>
+<%--                        <option value="${category.id}">${category.title}</option>--%>
+<%--                    </c:forEach>--%>
+                </select>
+            </div>
+            <div class="modal-row">
+                <select
+                        data-input="idPriority"
+                        class="task__form-select"
+                        name="приоритет"
+                        style="width: 100%"
+                >
+                    <option disabled selected value="">Выберите приоритет</option>
+
+<%--                    <c:forEach var="prioritet" items="${priorityList}">--%>
+<%--                        <option value="${prioritet.id}">${prioritet.title}</option>--%>
+<%--                    </c:forEach>--%>
+                </select>
+
+            </div>
+
+            <div class="modal-row">
+                <input
+                        data-input="date"
+                        class="input-element input-element--modal"
+                        type="date"
+                        required
+                />
+            </div>
+            <div class="row">
+                <button class="create-button" id="editTaskBtn">Добавить задачу</button>
+                <button
+                        class="create-button create-button--outline close-modal"
+                        aria-label="close modal"
+                        data-close
+                >
+                    Отмена
+                </button>
+            </div>
+        </section>
+    </div>
+</div>
+
 
 <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
 

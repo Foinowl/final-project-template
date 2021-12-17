@@ -97,16 +97,31 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     @Override
     public Task update(Task task) {
-        String sql = "update task set title = ?, completed = ?, priority_id = ?, category_id = ? where task_id = ?;";
+        String sql = "update task set title = ?, priority_id = ?, category_id = ?, date = ? where task_id = ?;";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, new String[] {"task_id"});
             ps.setString(1, task.getTitle());
-            ps.setInt(2, task.getCompleted());
-            ps.setLong(3, task.getIdPriority());
-            ps.setLong(4, task.getIdCategory());
+            ps.setLong(2, task.getIdPriority());
+            ps.setLong(3, task.getIdCategory());
+            ps.setDate(4, Date.valueOf(task.getDate()));
             ps.setLong(5, task.getId());
+            return ps;
+        }, keyHolder);
+
+        return findById(keyHolder.getKey().longValue());
+    }
+
+    @Override
+    public Task updateCompleted(Task task) {
+        String sql = "update task completed = ? where task_id = ?;";
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, new String[] {"task_id"});
+            ps.setInt(1, task.getCompleted());
+            ps.setLong(2, task.getId());
             return ps;
         }, keyHolder);
 
@@ -116,7 +131,6 @@ public class TaskRepositoryImpl implements TaskRepository {
     @Override
     public boolean deleteById(Long id) {
         return jdbcTemplate.update("delete from task where task_id = ?;", id) > 0;
-
     }
 
     @Override

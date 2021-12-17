@@ -43,6 +43,21 @@ public class CategoryController {
         }
     }
 
+    @GetMapping("/all/user/{id}")
+    public ResponseEntity<List<CategoryDto>> findAllByUserId(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(categoryService
+                    .findAllByUserId(id)
+                    .stream()
+                    .map(CategoryDto::fromCategory)
+                    .collect(Collectors.toList()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity("not found records", HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+
     @PostMapping("/add")
     public ResponseEntity<Object> add(@RequestBody CategoryDto category, BindingResult bindingResult) {
         ResponseEntity<Object> errors = responseErrorValidation.mapValidationService(bindingResult);
