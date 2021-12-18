@@ -67,8 +67,7 @@ public class TaskController {
         if (!ObjectUtils.isEmpty(errors)) return errors;
 
         try {
-            taskService.update(task);
-            return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity(TaskDto.fromTask(taskService.update(task)), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity("something wrong on the bd side", HttpStatus.NOT_ACCEPTABLE);
@@ -80,7 +79,7 @@ public class TaskController {
     public ResponseEntity delete(@PathVariable Long id) {
         boolean response = taskService.deleteById(id);
         if (response) {
-            return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity(response, HttpStatus.OK);
         } else {
             return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
         }

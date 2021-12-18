@@ -71,8 +71,10 @@ $(document).ready(function () {
     })
 
     $(".task__span").click(function (e) {
+        e.preventDefault()
+
         const idTask = $(this).data('task')
-        console.log(idTask)
+
         const type = $(this)
             .children()
             .first()
@@ -82,8 +84,51 @@ $(document).ready(function () {
         if (type === "trash") {
             deleteTaskById(idTask)
         } else if (type === "edit") {
+
             updateTaskById(idTask, idUser)
         }
+
+    })
+
+    $("[data-editBtn]").click(function (e) {
+        e.preventDefault();
+        e.stopPropagation()
+        const mapTask = {
+            idUser,
+            id: +$(this).attr("data-editBtn")
+        }
+
+
+        $("#editTask").find("input").each(function (index) {
+            const name = $(this).data("input")
+            const value = $(this).val()
+            mapTask[name] = value
+        })
+
+        $("#editTask").find("select").each(function (index) {
+            const name = $(this).data("input")
+            const value = $(this).val()
+            mapTask[name] = +value
+        })
+
+        const { responseJSON: updateTask } = $.ajax({
+            type: "PUT",
+            contentType: "application/json",
+            url: '/task/update/',
+            data: JSON.stringify(mapTask),
+            dataType: 'json',
+            async:false,
+            success: function (data) {
+                return data
+            },
+            error: function (error) {
+                console.log("ERRROR:", error)
+            }
+        });
+
+        $(".modal.is-visible").removeClass(isVisible)
+        clearEditTask()
+        changeRowTask(updateTask)
     })
 
 
@@ -205,96 +250,52 @@ function deleteTaskById(id) {
     });
 }
 
-async function updateTaskById(idTask, idUser) {
-    let categoryList = null;
-    let priorityList = null;
-    let task = null;
+function updateTaskById(idTask, idUser) {
 
-    let ajaxCategory = $.ajax({
+    const { responseJSON: categoryList } = $.ajax({
         type: "GET",
         contentType: "application/json",
         url: '/category/all/user/' + idUser,
+        async: false,
         dataType: 'json',
         success: function (data) {
-
+            return data
         },
         error: function (error) {
             console.log("ERRROR:", error)
         }
     });
 
-    categoryList = await ajaxCategory;
-
-    let ajaxPriority = $.ajax({
+    const { responseJSON: priorityList }  = $.ajax({
         type: "GET",
         contentType: "application/json",
         url: '/priority/all/',
         dataType: 'json',
+        async: false,
         success: function (data) {
-
+            return data
         },
         error: function (error) {
             console.log("ERRROR:", error)
         }
     });
 
-    priorityList = await ajaxPriority;
 
-    let ajaxTask = $.ajax({
+    const { responseJSON: task } = $.ajax({
         type: "GET",
         contentType: "application/json",
         url: '/task/id/' + idTask,
         dataType: 'json',
+        async: false,
         success: function (data) {
-
+            return data
         },
         error: function (error) {
             console.log("ERRROR:", error)
         }
     });
 
-    task = await ajaxTask;
-
     renderModalEditTask(categoryList, priorityList, task)
-
-    $("#editTaskBtn").click(function (e) {
-        const mapTask = {
-            idUser,
-            id: idTask
-        }
-
-        $("#editTask").find("input").each(function (index) {
-            const name = $(this).data("input")
-            const value = $(this).val()
-            mapTask[name] = value
-        })
-
-        $("#editTask").find("select").each(function (index) {
-            const name = $(this).data("input")
-            const value = $(this).val()
-            mapTask[name] = +value
-        })
-
-        console.log(mapTask)
-
-        $.ajax({
-            type: "PUT",
-            contentType: "application/json",
-            url: '/task/update/',
-            data: JSON.stringify(mapTask),
-            dataType: 'json',
-            success: function (data) {
-                console.log(data)
-            },
-            error: function (error) {
-                console.log("ERRROR:", error)
-            }
-        });
-
-
-        $(".modal.is-visible").removeClass(isVisible)
-        clearEditTask()
-    })
 }
 
 
@@ -307,7 +308,6 @@ function renderModalEditTask(categoryList, priorityList, task) {
         let optionString = '';
         let data = null;
         let inputTitle = null;
-        let inputId = null;
 
         let ele = null;
         if ($(this).data("input") === 'idCategory') {
@@ -333,10 +333,33 @@ function renderModalEditTask(categoryList, priorityList, task) {
     $($("#editTask").find("input").get(0)).val(task.title)
     $($("#editTask").find("input").get(1)).val(task.date)
 
+
+    $("[id='editTaskBtn']").each(function () {
+        $(this).attr("id", "editTaskBtn" + task.id);
+    });
+
+    $("[data-editBtn]").attr("data-editBtn", task.id)
+
 }
 
 function clearEditTask() {
     $("#editTask").find("select").each(function (index) {
         $(this).empty()
     })
+
+    $("[data-editBtn]").attr("id", "editTaskBtn")
+    $("[data-editBtn]").attr("data-editBtn", "")
+}
+
+function changeRowTask(updateTask) {
+    const listElement = ["id", "title", "date", "titlePriority", "titleCategory"]
+
+    $("#taskId" + updateTask.id)
+        .find("[data-color]")
+        .css({"background-color": `${updateTask.color}`})
+
+
+    listElement.forEach((el) =>
+        $("#taskId" + updateTask.id).find(`[data-${el}]`).text(updateTask[el])
+    )
 }

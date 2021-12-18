@@ -204,16 +204,17 @@
                     </li>
 
                     <c:forEach var="task" items="${taskList}">
-                        <li class="table-row">
+                        <li class="table-row" id="taskId${task.id}" data-task="${task.id}">
                             <div
                                     style="background-color: ${task.color}; height: 100%"
                                     class="col col-1"
+                                    data-color
                             ></div>
-                            <div class="col col-2">${task.id}</div>
-                            <div class="col col-3">${task.title}</div>
-                            <div class="col col-4">${task.date}</div>
-                            <div class="col col-5">${task.titlePriority}</div>
-                            <div class="col col-6">${task.titleCategory}</div>
+                            <div class="col col-2" data-id>${task.id}</div>
+                            <div class="col col-3" data-title>${task.title}</div>
+                            <div class="col col-4" data-date>${task.date}</div>
+                            <div class="col col-5" data-titlePriority>${task.titlePriority}</div>
+                            <div class="col col-6" data-titleCategory>${task.titleCategory}</div>
                             <div class="col col-7">
                                         <span class="task__span" data-task="${task.id}">
                                             <i class="fas fa-trash"></i>
@@ -418,7 +419,7 @@
                 />
             </div>
             <div class="row">
-                <button class="create-button" id="editTaskBtn">Добавить задачу</button>
+                <button class="create-button" id="editTaskBtn" data-editBtn>Добавить задачу</button>
                 <button
                         class="create-button create-button--outline close-modal"
                         aria-label="close modal"
