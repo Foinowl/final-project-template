@@ -12,6 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <link rel="stylesheet" type="text/css" href="../../css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/pagination.css"/>
     <link
             rel="stylesheet"
             href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
@@ -46,8 +47,8 @@
                             <!--          название категории-->
                             <span class="category-title" style="width: 85%">Все</span>
                             <!--сколько невыполненных задач-->
-                            <div style="display: inline-block; background-color: white;">
-                                <span class="completed-count">${categoryList.size()}</span>
+                            <div style="display: inline-block;">
+                                <span style="background-color: #eaeaea" class="completed-count">${categoryList.size()}</span>
                             </div>
                         </a>
                     </li>
@@ -119,7 +120,7 @@
                 </div>
                 <div class="stat__card">
                     <div class="card-header">
-                        <h3>${Math.round((stat.completedTotal / taskList.size()) * 100)}%</h3>
+                        <h3>${Math.round((stat.completedTotal / taskList.size())* 100)}%</h3>
                     </div>
                     <div class="line"></div>
 
@@ -134,49 +135,6 @@
                     <div class="footer card-footer">% Не завершенные задачи</div>
                 </div>
             </div>
-
-            <form class="task__form">
-                <div class="task__form-input">
-                    <input
-                            class="input-element"
-                            type="text"
-                            name="search"
-                            placeholder="Search..."
-                    />
-                </div>
-                <select
-                        class="task__form-select"
-                        id="statusTask"
-                        name="статус задачи"
-                >
-                    <option disabled selected value="">Выбор статуса задачи</option>
-                    <option value="au">Australia</option>
-                    <option value="ca">Canada</option>
-                    <option value="usa">USA</option>
-                </select>
-                <select
-                        class="task__form-select"
-                        id="prioritet"
-                        name="выбор приоритета"
-                >
-                    <option disabled selected value="">Выбор приоритета</option>
-                    <option value="au">Australia</option>
-                    <option value="ca">Canada</option>
-                    <option value="usa">USA</option>
-                </select>
-                <select
-                        class="task__form-select"
-                        id="sorting"
-                        name="сортировка поля"
-                >
-                    <option disabled selected value="">Колонка для сорт-ки</option>
-
-                    <option value="au">Australia</option>
-                    <option value="ca">Canada</option>
-                    <option value="usa">USA</option>
-                </select>
-                <button class="btn-search"><i class="fas fa-search"></i></button>
-            </form>
 
             <div class="row">
                 <button class="create-button" data-open="addTask">
@@ -203,57 +161,49 @@
                         <div class="col col-9"></div>
                     </li>
 
-                    <c:forEach var="task" items="${taskList}">
-                        <li class="table-row" id="taskId${task.id}">
-                            <div
-                                    style="background-color: ${task.color}; height: 100%"
-                                    class="col col-1"
-                                    data-color
-                            ></div>
-                            <div class="col col-2" data-id>${task.id}</div>
-                            <div class="col col-3" data-title>${task.title}</div>
-                            <div class="col col-4" data-date>${task.date}</div>
-                            <div class="col col-5" data-titlePriority>${task.titlePriority}</div>
-                            <div class="col col-6" data-titleCategory>${task.titleCategory}</div>
-                            <div class="col col-7">
-                                        <span class="task__span" data-task="${task.id}">
-                                            <i class="fas fa-trash"></i>
-                                        </span>
-                            </div>
-                            <div class="col col-8">
-                                        <span class="task__span" data-task="${task.id}">
-                                            <i class="fas fa-edit"></i>
-                                        </span>
-                            </div>
-                            <div class="col col-9">
-                                <input
-                                        type="checkbox"
-                                        class="custom-checkbox"
-                                        id="complete${task.id}"
-                                        name="complete"
-                                        <c:out value = "${ task.completed == 1 ? 'checked' : '' }"/>
-                                        value=${task.completed}
-                                />
+<%--                    <c:forEach var="task" items="${taskList}">--%>
+<%--                        <li class="table-row" id="taskId${task.id}">--%>
+<%--                            <div--%>
+<%--                                    style="background-color: ${task.color}; height: 100%"--%>
+<%--                                    class="col col-1"--%>
+<%--                                    data-color--%>
+<%--                            ></div>--%>
+<%--                            <div class="col col-2" data-id>${task.id}</div>--%>
+<%--                            <div class="col col-3" data-title>${task.title}</div>--%>
+<%--                            <div class="col col-4" data-date>${task.date}</div>--%>
+<%--                            <div class="col col-5" data-titlePriority>${task.titlePriority}</div>--%>
+<%--                            <div class="col col-6" data-titleCategory>${task.titleCategory}</div>--%>
+<%--                            <div class="col col-7">--%>
+<%--                                        <span class="task__span" data-task="${task.id}">--%>
+<%--                                            <i class="fas fa-trash"></i>--%>
+<%--                                        </span>--%>
+<%--                            </div>--%>
+<%--                            <div class="col col-8">--%>
+<%--                                        <span class="task__span" data-task="${task.id}">--%>
+<%--                                            <i class="fas fa-edit"></i>--%>
+<%--                                        </span>--%>
+<%--                            </div>--%>
+<%--                            <div class="col col-9">--%>
+<%--                                <input--%>
+<%--                                        type="checkbox"--%>
+<%--                                        class="custom-checkbox"--%>
+<%--                                        id="complete${task.id}"--%>
+<%--                                        name="complete"--%>
+<%--                                        <c:out value = "${ task.completed == 1 ? 'checked' : '' }"/>--%>
+<%--                                        value=${task.completed}--%>
+<%--                                />--%>
 
-                                <label for="complete${task.id}" data-task="${task.id}"></label>
-                            </div>
-                        </li>
-                    </c:forEach>
+<%--                                <label for="complete${task.id}" data-task="${task.id}"></label>--%>
+<%--                            </div>--%>
+<%--                        </li>--%>
+<%--                    </c:forEach>--%>
                 </ul>
             </div>
 
-            <div class="row" style="justify-content: center">
-                <ul class="pagination">
-                    <li><a href="#">«</a></li>
-                    <li><a href="#">1</a></li>
-                    <li><a class="active" href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">5</a></li>
-                    <li><a href="#">6</a></li>
-                    <li><a href="#">7</a></li>
-                    <li><a href="#">»</a></li>
-                </ul>
+            <div class="row container" style="justify-content: center">
+                <div id="pagination-wrapper">
+
+                </div>
             </div>
         </section>
     </main>

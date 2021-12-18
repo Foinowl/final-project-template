@@ -597,33 +597,6 @@ ul.header__main-nav--links li a:active::after {
 	background-color: #e9ecef;
 }
 
-ul.pagination {
-	display: inline-block;
-	padding: 0;
-	margin: 0;
-}
-
-ul.pagination li {
-	display: inline;
-}
-
-ul.pagination li a {
-	color: black;
-	float: left;
-	padding: 8px 16px;
-	text-decoration: none;
-	border-radius: 5px;
-}
-
-ul.pagination li a.active {
-	background-color: #0b76ef;
-	color: white;
-	border-radius: 5px;
-}
-
-ul.pagination li a:hover:not(.active) {
-	background-color: #ddd;
-}
 
 /* FOOTER */
 .footer {
@@ -893,3 +866,4 @@ ul.pagination li a:hover:not(.active) {
 .settings__row:hover {
 	background-color: rgb(39, 142, 206, 0.2);
 }
+

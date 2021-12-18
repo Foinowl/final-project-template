@@ -1,9 +1,110 @@
 const isVisible = "is-visible"
 
-$(document).ready(function () {
+$(document).ready( ()  => {
     const openEls = $("[data-open]")
     const closeEls = $("[data-close]")
     const idUser = $("[data-user]").data("user")
+
+    const {responseJSON: tableData} = $.ajax({
+        type: "GET",
+        contentType: "application/json",
+        url: "/task/all/user/"+idUser,
+        async:false,
+        dataType: 'json',
+        success: function (data) {
+            return data
+        },
+        error: function (error) {
+            alert(error)
+        }
+    })
+
+
+    var state = {
+        'querySet': tableData,
+
+        'page': 1,
+        'rows': 5,
+        'window': 5,
+    }
+
+    buildTable()
+
+    function pagination(querySet, page, rows) {
+
+        var trimStart = state.querySet.length > rows ? (page - 1) * rows : 0
+        var trimEnd = trimStart + rows
+
+        var trimmedData = querySet.slice(trimStart, trimEnd)
+
+        var pages = Math.ceil(querySet.length / rows);
+
+        return {
+            'querySet': trimmedData,
+            'pages': pages,
+        }
+    }
+
+    function pageButtons(pages) {
+
+        $('#pagination-wrapper').empty()
+
+        var maxLeft = (state.page - Math.floor(state.window / 2))
+        var maxRight = (state.page + Math.floor(state.window / 2))
+
+        if (maxLeft < 1) {
+            maxLeft = 1
+            maxRight = state.window
+        }
+
+        if (maxRight > pages) {
+            maxLeft = pages - (state.window - 1)
+
+            if (maxLeft < 1){
+                maxLeft = 1
+            }
+            maxRight = pages
+        }
+
+        for (var page = maxLeft; page <= maxRight; page++) {
+            $('#pagination-wrapper').append(
+                `<button data-buttonN=${page} value=${page} class="page">${page}</button>`
+            )
+        }
+
+        if (state.page != 1) {
+            $('#pagination-wrapper').prepend(
+                `<button value=${1} class="page">First</button>`
+            )
+        }
+
+        if (state.page != pages) {
+            $('#pagination-wrapper').append(
+                `<button value=${pages} class="page">Last</button>`
+            )
+        }
+
+        $('.page').off("click")
+        $('.page').on('click', function(e) {
+            $('.table').empty()
+
+            state.page = Number($(this).val())
+            // addActive()
+
+            buildTable()
+        })
+
+    }
+
+    function buildTable() {
+        var data = pagination(state.querySet, state.page, state.rows)
+
+        var myList = data.querySet
+
+        myList.forEach((el) => generateTemplateTask(el))
+
+        pageButtons(data.pages)
+    }
 
     $(".header__user").click(() => {
         toggleClass("#idSettings", "active")
@@ -96,7 +197,7 @@ $(document).ready(function () {
         }
 
         if (type === "trash") {
-            deleteTaskById(idTask)
+            deleteTaskById(idTask, state.querySet)
         } else if (type === "edit") {
 
             updateTaskById(idTask, idUser)
@@ -157,25 +258,56 @@ $(document).ready(function () {
             element.addClass(stringClass)
         }
     }
+
+    function deleteTaskById(id, query) {
+        const {responseJSON: isDelete} = $.ajax({
+            type: "DELETE",
+            contentType: "application/json",
+            url: '/task/delete/' + id,
+            async: false,
+            dataType: 'json',
+            success: function (data) {
+                return data;
+            },
+            error: function (error) {
+                console.log("ERRROR:", error)
+                alert(error)
+            }
+        });
+
+        // if (isDelete) {
+        //     $("#taskId" + id).remove()
+        // }
+        state.querySet = query.filter(el => el.id !== id)
+        $('.table').empty()
+        console.log(state.querySet)
+        console.log($('.table'))
+        buildTable()
+    }
+
+    function sendDataTask(mapTask) {
+        const {responseJSON: date} = $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: "/task/add",
+            async: false,
+            data: JSON.stringify(mapTask),
+            dataType: 'json',
+            success: function (data) {
+                // generateTemplateTask(data)
+                return data;
+            },
+            error: function (error) {
+                alert(error)
+            }
+        });
+        state.querySet.push(date)
+        console.log(state.querySet)
+        console.log($('.table'))
+        $('.table').empty()
+        buildTable()
+    }
 })
-
-
-function sendDataTask(mapTask) {
-    $.ajax({
-        type: "POST",
-        contentType: "application/json",
-        url: "/task/add",
-        data: JSON.stringify(mapTask),
-        dataType: 'json',
-        success: function (data) {
-            generateTemplateTask(data)
-        },
-        error: function (error) {
-            alert(error)
-        }
-    });
-}
-
 
 function sendDataCategory(mapCategory) {
     $.ajax({
@@ -252,27 +384,6 @@ function generateTemplateTask(taskDto) {
     $('.table').append(
         Item(taskDto)
     )
-}
-
-function deleteTaskById(id) {
-    const {responseJSON: isDelete} = $.ajax({
-        type: "DELETE",
-        contentType: "application/json",
-        url: '/task/delete/' + id,
-        async: false,
-        dataType: 'json',
-        success: function (data) {
-            return data;
-        },
-        error: function (error) {
-            console.log("ERRROR:", error)
-            alert(error)
-        }
-    });
-
-    if (isDelete) {
-        $("#taskId" + id).remove()
-    }
 }
 
 function updateTaskById(idTask, idUser) {
@@ -406,3 +517,22 @@ function  updateTaskComplete({...mapTask}) {
         }
     });
 }
+
+
+
+
+function pagination(querySet, page, rows) {
+
+    const trimStart = (page - 1) * rows
+    const trimEnd = trimStart + rows
+
+    const trimmedData = querySet.slice(trimStart, trimEnd)
+
+    const pages = Math.round(querySet.length / rows);
+
+    return {
+        'querySet': trimmedData,
+        'pages': pages,
+    }
+}
+

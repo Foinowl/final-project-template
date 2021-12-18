@@ -231,9 +231,9 @@ BEGIN
     end if;
 
     if coalesce(old.completed, 0) = 1 then
-        update stat set completed_total = completed_total - 1 where user_id = new.user_id;
+        update stat set completed_total = completed_total - 1 where user_id = old.user_id;
     else
-        update stat set uncompleted_total = uncompleted_total - 1 where user_id = new.user_id;
+        update stat set uncompleted_total = uncompleted_total - 1 where user_id = old.user_id;
     end if;
 
     RETURN NEW;

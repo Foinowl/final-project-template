@@ -136,7 +136,7 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
-    public Page<Task> findByParams(String title, Integer completed, Long priorityId, Long categoryId, Pageable pageable) {
+    public Page<Task> findByParams(Long userId, Pageable pageable) {
         String sql = "select " +
                 "task_id as taskId, " +
                 "completed as completed, " +
@@ -155,20 +155,17 @@ public class TaskRepositoryImpl implements TaskRepository {
                 "left join category as c " +
                 "on c.category_id  = t.category_id " +
                 "left join priority as p " +
-                "on p.priority_id = t.priority_id" +
-                "where (lower(t.title) like %?%) and " +
-                "t.completed = ?, " +
-                "t.priority_id = ?, " +
-                "t.category_id = ? " +
-                "order by t.task_id ? limit ? offset ? ;";
+                "on p.priority_id = t.priority_id " +
+                "where u.user_id = ? " +
+                "order by task_id asc limit ? offset ?";
 
-        String dir = pageable.getSort().toList().get(0).getDirection().name();
-
+        Long offset = (pageable.getPageNumber() - 1) * pageable.getOffset();
         List<Task> taskList = jdbcTemplate.query(sql, new Object[]{
-                title, completed, priorityId, categoryId, dir, pageable.getPageSize(), pageable.getOffset()
+                userId, pageable.getPageSize(), offset
         }, taskMapper);
 
-        return new PageImpl<Task>(taskList, pageable, count());
+        int totalSize = count(userId);
+        return new PageImpl<Task>(taskList, pageable, totalSize);
     }
 
     @Override
@@ -197,7 +194,7 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     }
 
-    private int count() {
-        return jdbcTemplate.queryForObject("SELECT count(*) FROM task", Integer.class);
+    private int count(Long id) {
+        return jdbcTemplate.queryForObject("SELECT count(*) FROM task where user_id = ?", new Object[]{id},Integer.class);
     }
 }

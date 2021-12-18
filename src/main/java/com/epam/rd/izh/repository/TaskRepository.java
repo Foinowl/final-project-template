@@ -21,7 +21,7 @@ public interface TaskRepository {
 
     boolean deleteById(Long id);
 
-    Page<Task> findByParams(String title, Integer completed, Long priorityId, Long categoryId, Pageable pageable);
+    Page<Task> findByParams(Long userId, Pageable pageable);
 
     Task findById(Long id);
 

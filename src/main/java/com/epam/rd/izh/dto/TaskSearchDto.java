@@ -17,8 +17,5 @@ public class TaskSearchDto {
 
     private Integer pageNumber;
     private Integer pageSize;
-
-    private String sortColumn;
-    private String sortDirection;
 }
 

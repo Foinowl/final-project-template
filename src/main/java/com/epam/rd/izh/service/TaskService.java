@@ -42,8 +42,8 @@ public class TaskService {
         return repository.deleteById(id);
     }
 
-    public Page<Task> findByParams(String text, Integer completed, Long priorityId, Long categoryId, PageRequest paging){
-        return repository.findByParams(text, completed, priorityId, categoryId, paging);
+    public Page<Task> findByParams(Long userId, PageRequest paging){
+        return repository.findByParams(userId, paging);
     }
 
     public Task findById(Long id){
