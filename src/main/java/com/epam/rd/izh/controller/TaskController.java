@@ -12,9 +12,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -67,11 +69,17 @@ public class TaskController {
         if (!ObjectUtils.isEmpty(errors)) return errors;
 
         try {
-            return new ResponseEntity(TaskDto.fromTask(taskService.update(task)), HttpStatus.OK);
+            boolean complete = task.getCompleted() != null;
+
+            if (!complete) {
+                return new ResponseEntity(TaskDto.fromTask(taskService.update(task)), HttpStatus.OK);
+            } else {
+                return new ResponseEntity(TaskDto.fromTask(taskService.updateByCompleted(task)), HttpStatus.OK);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity("something wrong on the bd side", HttpStatus.NOT_ACCEPTABLE);
-
         }
     }
 

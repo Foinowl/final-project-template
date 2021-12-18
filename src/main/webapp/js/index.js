@@ -67,28 +67,45 @@ $(document).ready(function () {
         })
         sendDataTask(mapTask)
         $(".modal.is-visible").removeClass(isVisible)
-
     })
 
-    $(".task__span").click(function (e) {
-        e.preventDefault()
+    $(document).on('click', "[data-task]", function (e) {
+        e.stopPropagation()
 
         const idTask = $(this).data('task')
 
-        const type = $(this)
-            .children()
-            .first()
-            .attr("class")
-            .split('-')[1]
+        let type = null;
+        let valueComplete = null
+        try {
+            type = $(this)
+                .children()
+                .first()
+                .attr("class")
+                .split('-')[1]
+        } catch (error) {
+            type = "complete"
+            const idCheckbox = $(this).attr("for")
+            console.log($("#"+idCheckbox).val())
+            if (+$("#"+idCheckbox).val() === 0 ) {
+                valueComplete = 1
+            } else {
+                valueComplete = 0
+            }
+            $("#"+idCheckbox).val(valueComplete)
+
+        }
 
         if (type === "trash") {
             deleteTaskById(idTask)
         } else if (type === "edit") {
 
             updateTaskById(idTask, idUser)
+        } else if (type === "complete") {
+            updateTaskComplete({id : idTask, idUser, completed: valueComplete})
         }
 
     })
+
 
     $("[data-editBtn]").click(function (e) {
         e.preventDefault();
@@ -111,13 +128,13 @@ $(document).ready(function () {
             mapTask[name] = +value
         })
 
-        const { responseJSON: updateTask } = $.ajax({
+        const {responseJSON: updateTask} = $.ajax({
             type: "PUT",
             contentType: "application/json",
             url: '/task/update/',
             data: JSON.stringify(mapTask),
             dataType: 'json',
-            async:false,
+            async: false,
             success: function (data) {
                 return data
             },
@@ -195,23 +212,24 @@ function generateTemplateCategory(categoryDto) {
 
 function generateTemplateTask(taskDto) {
     const Item = (task) => `
-       <li class="table-row">
+                        <li class="table-row" id="taskId${task.id}" data-task="${task.id}">
                             <div
                                     style="background-color: ${task.color}; height: 100%"
                                     class="col col-1"
+                                    data-color
                             ></div>
-                            <div class="col col-2">${task.id}</div>
-                            <div class="col col-3">${task.title}</div>
-                            <div class="col col-4">${task.date}</div>
-                            <div class="col col-5">${task.titlePriority}</div>
-                            <div class="col col-6">${task.titleCategory}</div>
+                            <div class="col col-2" data-id>${task.id}</div>
+                            <div class="col col-3" data-title>${task.title}</div>
+                            <div class="col col-4" data-date>${task.date}</div>
+                            <div class="col col-5" data-titlePriority>${task.titlePriority}</div>
+                            <div class="col col-6" data-titleCategory>${task.titleCategory}</div>
                             <div class="col col-7">
-                                        <span class="task__span">
+                                        <span class="task__span" data-task="${task.id}">
                                             <i class="fas fa-trash"></i>
                                         </span>
                             </div>
                             <div class="col col-8">
-                                        <span class="task__span">
+                                        <span class="task__span" data-task="${task.id}">
                                             <i class="fas fa-edit"></i>
                                         </span>
                             </div>
@@ -221,12 +239,14 @@ function generateTemplateTask(taskDto) {
                                         class="custom-checkbox"
                                         id="complete${task.id}"
                                         name="complete"
-                                        value="yes"
+                                        value=${task.completed}
+                                        ${task.completed === 1 ? 'checked' : ''}
                                 />
 
-                                <label for="complete${task.id}"></label>
+                                <label for="complete${task.id}" data-task="${task.id}"></label>
                             </div>
                         </li>
+                                           
 `;
 
     $('.table').append(
@@ -235,24 +255,29 @@ function generateTemplateTask(taskDto) {
 }
 
 function deleteTaskById(id) {
-    $.ajax({
+    const {responseJSON: isDelete} = $.ajax({
         type: "DELETE",
         contentType: "application/json",
         url: '/task/delete/' + id,
+        async: false,
         dataType: 'json',
         success: function (data) {
-            console.log(data)
+            return data;
         },
         error: function (error) {
             console.log("ERRROR:", error)
             alert(error)
         }
     });
+
+    if (isDelete) {
+        $("#taskId" + id).remove()
+    }
 }
 
 function updateTaskById(idTask, idUser) {
 
-    const { responseJSON: categoryList } = $.ajax({
+    const {responseJSON: categoryList} = $.ajax({
         type: "GET",
         contentType: "application/json",
         url: '/category/all/user/' + idUser,
@@ -266,7 +291,7 @@ function updateTaskById(idTask, idUser) {
         }
     });
 
-    const { responseJSON: priorityList }  = $.ajax({
+    const {responseJSON: priorityList} = $.ajax({
         type: "GET",
         contentType: "application/json",
         url: '/priority/all/',
@@ -281,7 +306,7 @@ function updateTaskById(idTask, idUser) {
     });
 
 
-    const { responseJSON: task } = $.ajax({
+    const {responseJSON: task} = $.ajax({
         type: "GET",
         contentType: "application/json",
         url: '/task/id/' + idTask,
@@ -362,4 +387,22 @@ function changeRowTask(updateTask) {
     listElement.forEach((el) =>
         $("#taskId" + updateTask.id).find(`[data-${el}]`).text(updateTask[el])
     )
+}
+
+function  updateTaskComplete({...mapTask}) {
+    console.log(JSON.stringify(mapTask))
+    $.ajax({
+        type: "PUT",
+        contentType: "application/json",
+        url: '/task/update/',
+        dataType: 'json',
+        data: JSON.stringify(mapTask),
+        async: false,
+        success: function (data) {
+            return data
+        },
+        error: function (error) {
+            console.log("ERRROR:", error)
+        }
+    });
 }

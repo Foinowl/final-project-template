@@ -34,6 +34,10 @@ public class TaskService {
         return repository.update(task.toTask());
     }
 
+    public Task updateByCompleted(TaskDto task) {
+        return repository.updateCompleted(task.toTask());
+    }
+
     public boolean deleteById(Long id){
         return repository.deleteById(id);
     }

@@ -98,7 +98,8 @@ public class CategoryRepositoryImpl implements CategoryRepository {
                 "uncompleted_count, " +
                 "u.login as userLogin, " +
                 "u.user_id as userId " +
-                "from category as c left join i_user as u on c.user_id = u.user_id where category_id = ?;";
+                "from category as c left join i_user as u on c.user_id = u.user_id where category_id = ? " +
+                "order by category_id asc";
 
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, categoryMapper);
     }
@@ -129,7 +130,8 @@ public class CategoryRepositoryImpl implements CategoryRepository {
                 "u.user_id as userId " +
                 "from category as c left join i_user as u " +
                 "on u.user_id = c.user_id " +
-                "where u.user_id = ?";
+                "where u.user_id = ? " +
+                "order by category_id asc";
         return jdbcTemplate.query(sql, new Object[] {id}, categoryMapper);
     }
 }

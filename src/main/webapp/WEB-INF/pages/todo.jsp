@@ -204,7 +204,7 @@
                     </li>
 
                     <c:forEach var="task" items="${taskList}">
-                        <li class="table-row" id="taskId${task.id}" data-task="${task.id}">
+                        <li class="table-row" id="taskId${task.id}">
                             <div
                                     style="background-color: ${task.color}; height: 100%"
                                     class="col col-1"
@@ -231,7 +231,8 @@
                                         class="custom-checkbox"
                                         id="complete${task.id}"
                                         name="complete"
-                                        value="yes"
+                                        <c:out value = "${ task.completed == 1 ? 'checked' : '' }"/>
+                                        value=${task.completed}
                                 />
 
                                 <label for="complete${task.id}" data-task="${task.id}"></label>

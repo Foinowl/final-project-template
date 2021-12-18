@@ -45,7 +45,8 @@ public class TaskRepositoryImpl implements TaskRepository {
                 "left join category as c " +
                 "on c.category_id  = t.category_id " +
                 "left join priority as p " +
-                "on p.priority_id = t.priority_id";
+                "on p.priority_id = t.priority_id " +
+                "order by t.task_id asc";
         return jdbcTemplate.query(sql, taskMapper);
     }
 
@@ -71,7 +72,8 @@ public class TaskRepositoryImpl implements TaskRepository {
                 "on c.category_id  = t.category_id " +
                 "left join priority as p " +
                 "on p.priority_id = t.priority_id " +
-                "where u.user_id = ?";
+                "where u.user_id = ? " +
+                "order by t.task_id asc";
         return jdbcTemplate.query(sql, new Object[]{id}, taskMapper);
     }
 
@@ -115,7 +117,7 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     @Override
     public Task updateCompleted(Task task) {
-        String sql = "update task completed = ? where task_id = ?;";
+        String sql = "update task set completed = ? where task_id = ?;";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
