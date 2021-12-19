@@ -2,6 +2,7 @@ package com.epam.rd.izh.controller;
 
 import com.epam.rd.izh.dto.AuthorizedUserDto;
 import com.epam.rd.izh.dto.LoginUserDto;
+import com.epam.rd.izh.entity.AuthorizedUser;
 import com.epam.rd.izh.entity.Role;
 
 import javax.validation.Valid;
@@ -112,7 +113,10 @@ public class AuthenticationController {
 
         userService.addAuthorizedUser(userService.getAuthorizedUser(registeredUser));
 
-        statService.createStatForUser(registeredUser.getId());
+        AuthorizedUser user = userService.getUserByLogin(registeredUser.getLogin());
+        if (user.getRole().equals("USER")) {
+            statService.createStatForUser(user.getId());
+        }
         securityService.autoLogin(registeredUser.getLogin(), registeredUser.getPassword());
         return "redirect:/";
     }

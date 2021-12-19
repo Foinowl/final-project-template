@@ -1,8 +1,6 @@
 package com.epam.rd.izh.controller;
 
-import com.epam.rd.izh.dto.CategoryDto;
 import com.epam.rd.izh.dto.PriorityDto;
-import com.epam.rd.izh.dto.PrioritySearchDto;
 import com.epam.rd.izh.entity.Priority;
 import com.epam.rd.izh.service.PriorityService;
 import com.epam.rd.izh.validations.ResponseErrorValidation;
@@ -95,21 +93,5 @@ public class PriorityController {
             return new ResponseEntity("id="+id+" not found", HttpStatus.NOT_ACCEPTABLE);
         }
         return new ResponseEntity(HttpStatus.OK);
-    }
-
-    @PostMapping("/search")
-    public ResponseEntity<List<PriorityDto>> search(@RequestBody PrioritySearchDto prioritySearchDto){
-
-        try {
-            return ResponseEntity.ok(
-                    priorityService.findByTitle(prioritySearchDto.getText())
-                            .stream()
-                            .map(PriorityDto::fromPriority)
-                            .collect(Collectors.toList())
-            );
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity("not found records", HttpStatus.NOT_ACCEPTABLE);
-        }
     }
 }

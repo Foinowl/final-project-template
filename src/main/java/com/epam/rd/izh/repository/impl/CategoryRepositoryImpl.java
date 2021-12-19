@@ -81,11 +81,12 @@ public class CategoryRepositoryImpl implements CategoryRepository {
                 "uncompleted_count, " +
                 "u.login as userLogin, " +
                 "u.user_id as userId " +
-                "from category category as c left join i_user as u on c.user_id = u.user_id" +
+                "from category as c left join i_user as u " +
+                "on u.user_id = c.user_id " +
                 "where (c.title is null or " +
                 "c.title = '' or " +
-                "lower(c.title) like lower(%?%)) " +
-                "order by c.title asc;";
+                "lower(c.title) like lower(CONCAT('%',?,'%'))) " +
+                "order by title asc";
         return jdbcTemplate.query(sql, new Object[]{text}, categoryMapper);
     }
 

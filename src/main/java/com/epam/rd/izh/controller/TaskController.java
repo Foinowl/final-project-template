@@ -1,25 +1,16 @@
 package com.epam.rd.izh.controller;
 
 import com.epam.rd.izh.dto.TaskDto;
-import com.epam.rd.izh.dto.TaskSearchDto;
 import com.epam.rd.izh.entity.Task;
 import com.epam.rd.izh.service.TaskService;
 import com.epam.rd.izh.service.UserService;
 import com.epam.rd.izh.validations.ResponseErrorValidation;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotNull;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -110,37 +101,5 @@ public class TaskController {
         }
 
         return ResponseEntity.ok(TaskDto.fromTask(task));
-    }
-
-
-    @PostMapping("/search")
-    public ResponseEntity<Page<Task>> search(@RequestBody TaskSearchDto taskSearchDto) {
-
-
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        Long userId = userService.getUserByLogin(name).getId();
-
-        Integer pageNumber = taskSearchDto.getPageNumber() != null ? taskSearchDto.getPageNumber() : null;
-        Integer pageSize = taskSearchDto.getPageSize() != null ? taskSearchDto.getPageSize() : null;
-
-
-        Sort.Direction direction = Sort.Direction.ASC;
-
-        Sort sort = Sort.by(direction, "task_id");
-
-        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sort);
-
-        Page<Task> result = null;
-        try {
-            result = taskService.findByParams(userId, pageRequest);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity("something wrong on the bd side", HttpStatus.NOT_ACCEPTABLE);
-
-        }
-
-        return ResponseEntity.ok(result);
-
     }
 }

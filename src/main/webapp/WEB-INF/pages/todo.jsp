@@ -34,13 +34,13 @@
             </div>
             <div class="side-nav__content--wrapper">
                 <ul class="side-nav__ul">
-                    <div class="search-category-area">
+                    <form class="search-category-area" id="searchCategory">
                         <input
                                 class="input-element"
                                 maxlength="256"
                                 placeholder="Поиск категорий"
                         />
-                    </div>
+                    </form>
                     <!-- виртуальная категория 'Все'-->
                     <li class="nav-item category">
                         <a class="nav-link">
@@ -48,7 +48,8 @@
                             <span class="category-title" style="width: 85%">Все</span>
                             <!--сколько невыполненных задач-->
                             <div style="display: inline-block;">
-                                <span style="background-color: #eaeaea" class="completed-count">${categoryList.size()}</span>
+                                <span style="background-color: #eaeaea"
+                                      class="completed-count">${categoryList.size()}</span>
                             </div>
                         </a>
                     </li>
@@ -87,7 +88,8 @@
                     <li class=""><a href="#">About</a></li>
                     <li>
                         <div class="header__user">
-                            <span class="header__user-name" data-user="${user.id}">${user.login}</span>
+                            <span class="header__user-name" data-userId="${user.id}"
+                                  data-userLogin="${user.login}">${user.login}</span>
                             <span class="header__arrow">
 										<i class="fas fa-arrow-down"></i>
 									</span>
@@ -161,42 +163,42 @@
                         <div class="col col-9"></div>
                     </li>
 
-<%--                    <c:forEach var="task" items="${taskList}">--%>
-<%--                        <li class="table-row" id="taskId${task.id}">--%>
-<%--                            <div--%>
-<%--                                    style="background-color: ${task.color}; height: 100%"--%>
-<%--                                    class="col col-1"--%>
-<%--                                    data-color--%>
-<%--                            ></div>--%>
-<%--                            <div class="col col-2" data-id>${task.id}</div>--%>
-<%--                            <div class="col col-3" data-title>${task.title}</div>--%>
-<%--                            <div class="col col-4" data-date>${task.date}</div>--%>
-<%--                            <div class="col col-5" data-titlePriority>${task.titlePriority}</div>--%>
-<%--                            <div class="col col-6" data-titleCategory>${task.titleCategory}</div>--%>
-<%--                            <div class="col col-7">--%>
-<%--                                        <span class="task__span" data-task="${task.id}">--%>
-<%--                                            <i class="fas fa-trash"></i>--%>
-<%--                                        </span>--%>
-<%--                            </div>--%>
-<%--                            <div class="col col-8">--%>
-<%--                                        <span class="task__span" data-task="${task.id}">--%>
-<%--                                            <i class="fas fa-edit"></i>--%>
-<%--                                        </span>--%>
-<%--                            </div>--%>
-<%--                            <div class="col col-9">--%>
-<%--                                <input--%>
-<%--                                        type="checkbox"--%>
-<%--                                        class="custom-checkbox"--%>
-<%--                                        id="complete${task.id}"--%>
-<%--                                        name="complete"--%>
-<%--                                        <c:out value = "${ task.completed == 1 ? 'checked' : '' }"/>--%>
-<%--                                        value=${task.completed}--%>
-<%--                                />--%>
+                    <%--                    <c:forEach var="task" items="${taskList}">--%>
+                    <%--                        <li class="table-row" id="taskId${task.id}">--%>
+                    <%--                            <div--%>
+                    <%--                                    style="background-color: ${task.color}; height: 100%"--%>
+                    <%--                                    class="col col-1"--%>
+                    <%--                                    data-color--%>
+                    <%--                            ></div>--%>
+                    <%--                            <div class="col col-2" data-id>${task.id}</div>--%>
+                    <%--                            <div class="col col-3" data-title>${task.title}</div>--%>
+                    <%--                            <div class="col col-4" data-date>${task.date}</div>--%>
+                    <%--                            <div class="col col-5" data-titlePriority>${task.titlePriority}</div>--%>
+                    <%--                            <div class="col col-6" data-titleCategory>${task.titleCategory}</div>--%>
+                    <%--                            <div class="col col-7">--%>
+                    <%--                                        <span class="task__span" data-task="${task.id}">--%>
+                    <%--                                            <i class="fas fa-trash"></i>--%>
+                    <%--                                        </span>--%>
+                    <%--                            </div>--%>
+                    <%--                            <div class="col col-8">--%>
+                    <%--                                        <span class="task__span" data-task="${task.id}">--%>
+                    <%--                                            <i class="fas fa-edit"></i>--%>
+                    <%--                                        </span>--%>
+                    <%--                            </div>--%>
+                    <%--                            <div class="col col-9">--%>
+                    <%--                                <input--%>
+                    <%--                                        type="checkbox"--%>
+                    <%--                                        class="custom-checkbox"--%>
+                    <%--                                        id="complete${task.id}"--%>
+                    <%--                                        name="complete"--%>
+                    <%--                                        <c:out value = "${ task.completed == 1 ? 'checked' : '' }"/>--%>
+                    <%--                                        value=${task.completed}--%>
+                    <%--                                />--%>
 
-<%--                                <label for="complete${task.id}" data-task="${task.id}"></label>--%>
-<%--                            </div>--%>
-<%--                        </li>--%>
-<%--                    </c:forEach>--%>
+                    <%--                                <label for="complete${task.id}" data-task="${task.id}"></label>--%>
+                    <%--                            </div>--%>
+                    <%--                        </li>--%>
+                    <%--                    </c:forEach>--%>
                 </ul>
             </div>
 
@@ -340,9 +342,9 @@
                         style="width: 100%"
                 >
                     <option disabled selected value="">Выберите категорию</option>
-<%--                    <c:forEach var="category" items="${categoryList}">--%>
-<%--                        <option value="${category.id}">${category.title}</option>--%>
-<%--                    </c:forEach>--%>
+                    <%--                    <c:forEach var="category" items="${categoryList}">--%>
+                    <%--                        <option value="${category.id}">${category.title}</option>--%>
+                    <%--                    </c:forEach>--%>
                 </select>
             </div>
             <div class="modal-row">
@@ -354,9 +356,9 @@
                 >
                     <option disabled selected value="">Выберите приоритет</option>
 
-<%--                    <c:forEach var="prioritet" items="${priorityList}">--%>
-<%--                        <option value="${prioritet.id}">${prioritet.title}</option>--%>
-<%--                    </c:forEach>--%>
+                    <%--                    <c:forEach var="prioritet" items="${priorityList}">--%>
+                    <%--                        <option value="${prioritet.id}">${prioritet.title}</option>--%>
+                    <%--                    </c:forEach>--%>
                 </select>
 
             </div>
@@ -385,7 +387,6 @@
 
 
 <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
-
 <script src="../../js/index.js"></script>
 </body>
 </html>

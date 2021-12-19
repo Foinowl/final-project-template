@@ -5,6 +5,7 @@ import static com.epam.rd.izh.util.StringConstants.ENG_GREETING;
 import com.epam.rd.izh.dto.*;
 import com.epam.rd.izh.entity.Task;
 import com.epam.rd.izh.service.*;
+import com.epam.rd.izh.util.UtilMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -34,21 +35,28 @@ public class IndexController {
   @Autowired
   PriorityService priorityService;
 
-//  @GetMapping("/")
-//  public String login(Authentication authentication, Model model) {
-//    Message greetingMessage = new Message();
-//    greetingMessage.setMessage(ENG_GREETING + authentication.getName());
-//
-//    model.addAttribute("message", greetingMessage.getMessage());
-//    return "index";
-//  }
+  @GetMapping("/")
+  public String login(Authentication authentication, Model model) {
+
+    String url = UtilMethod.determineTargetUrl(authentication);
+
+    return "redirect:"+url;
+  }
 
   @GetMapping("/admin-dashboard")
   public String admin(Authentication authentication, Model model) {
-    Message greetingMessage = new Message();
-    greetingMessage.setMessage(ENG_GREETING + authentication.getName());
+    String login = authentication.getName();
 
-    model.addAttribute("message", greetingMessage.getMessage());
+    AuthorizedUserDto authorizedUserDto = userService.getAuthorizedUserDto(login);
+
+    List<UserDto> userDtoList = userService.getAllAuthorizedUsers(authorizedUserDto.getLogin())
+            .stream()
+            .filter(user -> !user.getRole().equals("ADMIN"))
+            .map(UserDto::fromAuthorizedUser)
+            .collect(Collectors.toList());
+
+    model.addAttribute("user", authorizedUserDto);
+    model.addAttribute("userList", userDtoList);
     return "admin";
   }
 

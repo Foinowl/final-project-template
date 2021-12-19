@@ -52,7 +52,7 @@ public class UserService {
         return AuthorizedUserDto.fromUser(userRepository.getUserByLogin(login));
     }
 
-    public List<AuthorizedUserDto> getAllAuthorizedUsers(String login)
+    public List<AuthorizedUser> getAllAuthorizedUsers(String login)
             throws SecurityException{
         AuthorizedUserDto authorizedUserDto = getAuthorizedUserDto(login);
 
@@ -60,10 +60,6 @@ public class UserService {
             throw new SecurityException();
         }
 
-        return userRepository
-                .getAllUsers()
-                .stream()
-                .map(AuthorizedUserDto::fromUser)
-                .collect(Collectors.toList());
+        return userRepository.getAllUsers();
     }
 }

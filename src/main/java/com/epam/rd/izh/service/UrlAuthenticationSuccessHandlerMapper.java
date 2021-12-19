@@ -1,5 +1,7 @@
 package com.epam.rd.izh.service;
 
+import com.epam.rd.izh.util.StringConstants;
+import com.epam.rd.izh.util.UtilMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -37,7 +39,7 @@ public class UrlAuthenticationSuccessHandlerMapper implements AuthenticationSucc
             Authentication authentication
     ) throws IOException {
 
-        String targetUrl = determineTargetUrl(authentication);
+        String targetUrl = UtilMethod.determineTargetUrl(authentication);
 
         if (response.isCommitted()) {
             logger.debug(
@@ -47,23 +49,6 @@ public class UrlAuthenticationSuccessHandlerMapper implements AuthenticationSucc
         }
 
         redirectStrategy.sendRedirect(request, response, targetUrl);
-    }
-
-    private String determineTargetUrl(final Authentication authentication) {
-
-        Map<String, String> roleTargetUrlMap = new HashMap<>();
-        roleTargetUrlMap.put("USER", "/user-dashboard");
-        roleTargetUrlMap.put("ADMIN", "/admin-dashboard");
-
-        final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        for (GrantedAuthority grantedAuthority : authorities) {
-            String authorityName = grantedAuthority.getAuthority();
-            if(roleTargetUrlMap.containsKey(authorityName)) {
-                return roleTargetUrlMap.get(authorityName);
-            }
-        }
-
-        throw new IllegalStateException();
     }
 
     protected void clearAuthenticationAttributes(HttpServletRequest request) {

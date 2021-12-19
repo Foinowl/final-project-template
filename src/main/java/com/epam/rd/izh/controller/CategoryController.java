@@ -118,6 +118,7 @@ public class CategoryController {
             return ResponseEntity.ok(
                     categoryService.findByTitle(categorySearchDto.getText())
                             .stream()
+                            .filter(category -> category.getUserLogin().equals(categorySearchDto.getLoginUser()))
                             .map(CategoryDto::fromCategory)
                             .collect(Collectors.toList()));
         } catch (Exception e) {

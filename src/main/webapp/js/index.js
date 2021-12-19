@@ -3,7 +3,8 @@ const isVisible = "is-visible"
 $(document).ready( ()  => {
     const openEls = $("[data-open]")
     const closeEls = $("[data-close]")
-    const idUser = $("[data-user]").data("user")
+    const idUser = $("[data-userId]").data("userid")
+    const loginUser = $("[data-userLogin]").data("userlogin")
 
     const {responseJSON: tableData} = $.ajax({
         type: "GET",
@@ -275,18 +276,13 @@ $(document).ready( ()  => {
             }
         });
 
-        // if (isDelete) {
-        //     $("#taskId" + id).remove()
-        // }
         state.querySet = query.filter(el => el.id !== id)
         $('.table').empty()
-        console.log(state.querySet)
-        console.log($('.table'))
         buildTable()
     }
 
     function sendDataTask(mapTask) {
-        const {responseJSON: date} = $.ajax({
+        $.ajax({
             type: "POST",
             contentType: "application/json",
             url: "/task/add",
@@ -294,19 +290,40 @@ $(document).ready( ()  => {
             data: JSON.stringify(mapTask),
             dataType: 'json',
             success: function (data) {
-                // generateTemplateTask(data)
+                state.querySet.push(data)
+                $('.table').empty()
+                buildTable()
+            },
+            error: function (error) {
+                alert(error)
+            }
+        });
+    }
+
+    $("#searchCategory").submit(function (e){
+        e.preventDefault()
+        const text = $($(this).children().get(0)).val()
+        const obj = {
+            text,
+            loginUser
+        }
+        const {responseJSON: date} = $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: "/category/search",
+            async: false,
+            data: JSON.stringify(obj),
+            dataType: 'json',
+            success: function (data) {
                 return data;
             },
             error: function (error) {
                 alert(error)
             }
         });
-        state.querySet.push(date)
-        console.log(state.querySet)
-        console.log($('.table'))
-        $('.table').empty()
-        buildTable()
-    }
+        $('#listCategory').empty()
+        date.forEach(el => generateTemplateCategory(el))
+    })
 })
 
 function sendDataCategory(mapCategory) {
@@ -343,6 +360,7 @@ function generateTemplateCategory(categoryDto) {
 }
 
 function generateTemplateTask(taskDto) {
+    console.log(taskDto)
     const Item = (task) => `
                         <li class="table-row" id="taskId${task.id}" data-task="${task.id}">
                             <div
@@ -517,22 +535,3 @@ function  updateTaskComplete({...mapTask}) {
         }
     });
 }
-
-
-
-
-function pagination(querySet, page, rows) {
-
-    const trimStart = (page - 1) * rows
-    const trimEnd = trimStart + rows
-
-    const trimmedData = querySet.slice(trimStart, trimEnd)
-
-    const pages = Math.round(querySet.length / rows);
-
-    return {
-        'querySet': trimmedData,
-        'pages': pages,
-    }
-}
-

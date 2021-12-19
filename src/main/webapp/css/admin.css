@@ -1,0 +1,64 @@
+.table li {
+    justify-content: flex-start;
+}
+
+.col-1 {
+    flex-basis: 5%;
+}
+.col-2 {
+    flex-basis: 4%;
+    text-align: center;
+}
+.col-3 {
+    flex-basis: 20%;
+}
+.col-4 {
+    flex-basis: 20%;
+}
+
+.col-5 {
+    flex-basis: 20%;
+}
+
+.col-6 {
+    flex-basis: 20%;
+}
+
+.col-7 {
+    flex-basis: 5%;
+}
+
+.col-8 {
+    flex-basis: 5%;
+}
+
+.col-9 {
+    flex-basis: 5%;
+}
+
+
+.col-1-row {
+    flex-basis: 5%;
+}
+.col-2-row {
+    flex-basis: 4%;
+    text-align: center;
+}
+.col-3-row {
+    flex-basis: 20%;
+}
+.col-4-row {
+    flex-basis: 20%;
+}
+
+.col-5-row {
+    flex-basis: 20%;
+}
+
+.col-6-row {
+    flex-basis: 25%;
+}
+
+.col-7-row {
+    flex-basis: 5%;
+}

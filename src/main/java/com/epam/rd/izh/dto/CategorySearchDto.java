@@ -13,4 +13,6 @@ import org.springframework.stereotype.Component;
 @Data
 public class CategorySearchDto {
     private String text;
+
+    private String loginUser;
 }

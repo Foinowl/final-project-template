@@ -1,9 +1,16 @@
-
 -- password: admin1admin1
 -- password: admin2admin2
+-- password: admin4admin4
+-- password: admin3admin3
 insert into i_user(first_name, middle_name, last_name, date_birth, login, passwords, role_id)
-values ('Ivan', 'Petrovich', 'Petrov', '2000-01-23', 'admin1', '$2a$10$IfzJDncYwZvjXNkgGqzKEOM06LzF7yBfO/f5jVTgEkFkE3XzaTsje', 2),
-       ('Ivan', 'Petrovich', 'Petrov', '2000-01-23', 'admin2', '$2a$10$i69Wh7r2TIOCkyagrRzv2emppyJ4RUiWRakWQMj22mGsyqSFgCsRW', 2);
+values ('Ivan', 'Petrovich', 'Petrov', '2000-01-23', 'admin1',
+        '$2a$10$IfzJDncYwZvjXNkgGqzKEOM06LzF7yBfO/f5jVTgEkFkE3XzaTsje', 2),
+       ('Ivan', 'Petrovich', 'Petrov', '2000-01-23', 'admin2',
+        '$2a$10$i69Wh7r2TIOCkyagrRzv2emppyJ4RUiWRakWQMj22mGsyqSFgCsRW', 2),
+       ('Ivan', 'Petrovich', 'Petrov', '2000-01-23', 'admin4',
+        '$2a$10$j6wgnnXj0UdlSSqt4g3VL.Q6H.oYVPWzrrE2UupjaRujQiOf3GTAK', 1),
+       ('Ivan', 'Petrovich', 'Petrov', '2000-01-23', 'admin3',
+        '$2a$10$SV2Um7LCfLuKs0thCAot4OHU8fbUVmXHPFvDIh/xiisqJGEOxohZy', 1);
 
 insert into stat (completed_total, uncompleted_total, user_id)
 values (0, 0, 1),

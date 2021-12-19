@@ -136,39 +136,6 @@ public class TaskRepositoryImpl implements TaskRepository {
     }
 
     @Override
-    public Page<Task> findByParams(Long userId, Pageable pageable) {
-        String sql = "select " +
-                "task_id as taskId, " +
-                "completed as completed, " +
-                "t.category_id as categoryId, " +
-                "t.priority_id as priorityId, " +
-                "t.user_id as userId, " +
-                "p.title as titlePriority, " +
-                "c.title as titleCategory, " +
-                "u.login as loginUser, " +
-                "p.color as color, " +
-                "t.date as dateTask, " +
-                "t.title as title " +
-                "from task as t " +
-                "left join i_user as u " +
-                "on t.user_id = u.user_id " +
-                "left join category as c " +
-                "on c.category_id  = t.category_id " +
-                "left join priority as p " +
-                "on p.priority_id = t.priority_id " +
-                "where u.user_id = ? " +
-                "order by task_id asc limit ? offset ?";
-
-        Long offset = (pageable.getPageNumber() - 1) * pageable.getOffset();
-        List<Task> taskList = jdbcTemplate.query(sql, new Object[]{
-                userId, pageable.getPageSize(), offset
-        }, taskMapper);
-
-        int totalSize = count(userId);
-        return new PageImpl<Task>(taskList, pageable, totalSize);
-    }
-
-    @Override
     public Task findById(Long id) {
         String sql = "select " +
                 "task_id as taskId, " +
@@ -192,9 +159,5 @@ public class TaskRepositoryImpl implements TaskRepository {
                 "where t.task_id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, taskMapper);
 
-    }
-
-    private int count(Long id) {
-        return jdbcTemplate.queryForObject("SELECT count(*) FROM task where user_id = ?", new Object[]{id},Integer.class);
     }
 }
