@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,16 +31,16 @@ public class UserService {
         return userRepository.addUser(authorizedUser);
     }
 
-    public long getAuthorizedUserId(String login){
-        return userRepository.getUserIdByLogin(login);
-    }
-
     public boolean isLoginAvailable(String login) {
 
         AuthorizedUser user = getUserByLogin(login);
 
         return user == null;
 
+    }
+
+    public Long getUserIdByLogin(String login) {
+        return userRepository.getUserIdByLogin(login);
     }
 
     @Nullable
@@ -61,5 +62,9 @@ public class UserService {
         }
 
         return userRepository.getAllUsers();
+    }
+
+    public boolean delete(@NotNull Long id) {
+       return userRepository.deleteUser(id);
     }
 }

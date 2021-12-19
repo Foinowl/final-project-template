@@ -15,8 +15,7 @@ public class StatMapper implements RowMapper<Stat> {
                 .id(rs.getLong("stat_id"))
                 .completedTotal(rs.getLong("completed_total"))
                 .uncompletedTotal(rs.getLong("uncompleted_total"))
-                .userTitle(rs.getString("login"))
-                .userId(rs.getLong("user_id"))
+                .idUser(rs.getLong("user_id"))
                 .build();
     }
 }

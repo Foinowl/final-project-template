@@ -16,6 +16,5 @@ public class Stat {
     private Long completedTotal;
     private Long uncompletedTotal;
 
-    private Long userId;
-    private String userTitle;
+    private Long idUser;
 }

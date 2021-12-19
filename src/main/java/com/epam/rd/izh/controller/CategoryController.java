@@ -2,8 +2,9 @@ package com.epam.rd.izh.controller;
 
 import com.epam.rd.izh.dto.CategoryDto;
 import com.epam.rd.izh.dto.CategorySearchDto;
-import com.epam.rd.izh.entity.Category;
 import com.epam.rd.izh.service.CategoryService;
+import com.epam.rd.izh.service.UserService;
+import com.epam.rd.izh.util.SecurityUtil;
 import com.epam.rd.izh.validations.ResponseErrorValidation;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/category")
@@ -22,35 +22,20 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
+    private final UserService userService;
     private final ResponseErrorValidation responseErrorValidation;
 
-    public CategoryController(CategoryService categoryService, ResponseErrorValidation responseErrorValidation) {
+    public CategoryController(CategoryService categoryService, UserService userService, ResponseErrorValidation responseErrorValidation) {
         this.categoryService = categoryService;
+        this.userService = userService;
         this.responseErrorValidation = responseErrorValidation;
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<CategoryDto>> findAll() {
+    public ResponseEntity<List<CategoryDto>> findAllByUserId() {
         try {
             return ResponseEntity.ok(categoryService
-                    .findAll()
-                    .stream()
-                    .map(CategoryDto::fromCategory)
-                    .collect(Collectors.toList()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity("not found records", HttpStatus.NOT_ACCEPTABLE);
-        }
-    }
-
-    @GetMapping("/all/user/{id}")
-    public ResponseEntity<List<CategoryDto>> findAllByUserId(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(categoryService
-                    .findAllByUserId(id)
-                    .stream()
-                    .map(CategoryDto::fromCategory)
-                    .collect(Collectors.toList()));
+                    .findAllByUserId(userService.getUserIdByLogin(SecurityUtil.getCurrentUser().getUsername())));
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity("not found records", HttpStatus.NOT_ACCEPTABLE);
@@ -64,7 +49,7 @@ public class CategoryController {
         if (!ObjectUtils.isEmpty(errors)) return errors;
 
         try{
-            return ResponseEntity.ok(CategoryDto.fromCategory(categoryService.add(category)));
+            return ResponseEntity.ok(categoryService.add(category));
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity("something wrong on the bd side", HttpStatus.NOT_ACCEPTABLE);
@@ -88,7 +73,7 @@ public class CategoryController {
     @GetMapping("/id/{id}")
     public ResponseEntity<CategoryDto> findById(@PathVariable Long id) {
 
-        Category category = null;
+        CategoryDto category = null;
 
         try{
             category = categoryService.findById(id);
@@ -97,7 +82,7 @@ public class CategoryController {
             return new ResponseEntity("id="+id+" not found", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return  ResponseEntity.ok(CategoryDto.fromCategory(category));
+        return  ResponseEntity.ok(category);
     }
 
     @DeleteMapping("/delete/{id}")
@@ -116,11 +101,7 @@ public class CategoryController {
     public ResponseEntity<List<CategoryDto>> search(@RequestBody CategorySearchDto categorySearchDto){
         try {
             return ResponseEntity.ok(
-                    categoryService.findByTitle(categorySearchDto.getText())
-                            .stream()
-                            .filter(category -> category.getUserLogin().equals(categorySearchDto.getLoginUser()))
-                            .map(CategoryDto::fromCategory)
-                            .collect(Collectors.toList()));
+                    categoryService.findByTitle(categorySearchDto.getText()));
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity("not found records", HttpStatus.NOT_ACCEPTABLE);

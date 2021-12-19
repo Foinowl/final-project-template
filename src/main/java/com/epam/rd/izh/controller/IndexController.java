@@ -76,11 +76,7 @@ public class IndexController {
               .map(TaskDto::fromTask)
               .collect(Collectors.toList());
 
-      categoryDtoList = categoryService.findAll()
-              .stream()
-              .filter(category -> login.equals(category.getUserLogin()))
-              .map(CategoryDto::fromCategory)
-              .collect(Collectors.toList());
+      categoryDtoList = categoryService.findAllByUserId(authorizedUserDto.getId());
 
       priorityDtoList = priorityService
               .findAll()

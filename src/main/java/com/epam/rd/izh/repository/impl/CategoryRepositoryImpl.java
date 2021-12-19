@@ -21,7 +21,6 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     @Autowired
     CategoryMapper categoryMapper;
 
-
     @Override
     public List<Category> findAll() {
         String sql = "select " +
@@ -29,7 +28,6 @@ public class CategoryRepositoryImpl implements CategoryRepository {
                 "title, " +
                 "completed_count, " +
                 "uncompleted_count, " +
-                "u.login as userLogin, " +
                 "u.user_id as userId " +
                 "from category as c left join i_user as u " +
                 "on u.user_id = c.user_id;";
@@ -97,7 +95,6 @@ public class CategoryRepositoryImpl implements CategoryRepository {
                 "title, " +
                 "completed_count, " +
                 "uncompleted_count, " +
-                "u.login as userLogin, " +
                 "u.user_id as userId " +
                 "from category as c left join i_user as u on c.user_id = u.user_id where category_id = ? " +
                 "order by category_id asc";
@@ -112,7 +109,6 @@ public class CategoryRepositoryImpl implements CategoryRepository {
                 "title, " +
                 "completed_count, " +
                 "uncompleted_count, " +
-                "u.login as userLogin, " +
                 "u.user_id as userId " +
                 "from category as c left join i_user as u on c.user_id = u.user_id order by c.title asc;";
 
@@ -127,7 +123,6 @@ public class CategoryRepositoryImpl implements CategoryRepository {
                 "title, " +
                 "completed_count, " +
                 "uncompleted_count, " +
-                "u.login as userLogin, " +
                 "u.user_id as userId " +
                 "from category as c left join i_user as u " +
                 "on u.user_id = c.user_id " +

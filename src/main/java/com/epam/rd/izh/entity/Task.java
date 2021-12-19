@@ -21,9 +21,4 @@ public class Task {
     private Long idPriority;
     private Long idCategory;
     private Long idUser;
-
-    private String titlePriority;
-    private String titleCategory;
-    private String loginUser;
-    private String color;
 }

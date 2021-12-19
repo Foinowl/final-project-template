@@ -22,10 +22,6 @@ public class TaskMapper implements RowMapper<Task> {
                 .idCategory(rs.getLong("categoryId"))
                 .idPriority(rs.getLong("priorityId"))
                 .idUser(rs.getLong("userId"))
-                .titleCategory(rs.getString("titleCategory"))
-                .titlePriority(rs.getString("titlePriority"))
-                .loginUser(rs.getString("loginUser"))
-                .color(rs.getString("color"))
                 .date(rs.getDate("dateTask").toLocalDate())
                 .build();
     }

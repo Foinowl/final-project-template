@@ -53,8 +53,6 @@
             <span class="founded">Найдено пользователей: ${userList.size()}</span>
         </div>
 
-        ${userList}
-
         <div class="task-card">
             <ul class="table">
                 <li class="table-header" style="margin-bottom: 0">
@@ -74,19 +72,19 @@
 
 
                 <c:forEach items="${userList}" var="item">
-                    <li class="table-row" id="taskId${task.id}">
+                    <li class="table-row" id="userId${task.id}" data-user="${item.id}">
                         <div
                                 style="background-color: indianred; height: 100%"
-                                class="col col-1-row"
+                                class="col col-1"
                                 data-color
                         ></div>
-                        <div class="col col-2-row" data-id>${item.id}</div>
-                        <div class="col col-3-row" data-title>${item.firstName}</div>
-                        <div class="col col-4-row" data-title>${item.lastName}</div>
-                        <div class="col col-5-row" data-title>${item.middleName}</div>
-                        <div class="col col-6-row" data-date>${item.dateBirth}</div>
-                        <div class="col col-7-row">
-                        <span class="task__span" data-task="${item.id}">
+                        <div class="col col-2" data-id>${item.id}</div>
+                        <div class="col col-3">${item.firstName}</div>
+                        <div class="col col-4">${item.lastName}</div>
+                        <div class="col col-5">${item.middleName}</div>
+                        <div class="col col-6">${item.dateBirth}</div>
+                        <div class="col col-7">
+                        <span class="task__span">
                             <i class="fas fa-trash"></i>
                         </span>
                         </div>
@@ -102,6 +100,9 @@
         </div>
     </section>
 </main>
+
+<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+<script src="../../js/admin.js"></script>
 </body>
 </html>
 

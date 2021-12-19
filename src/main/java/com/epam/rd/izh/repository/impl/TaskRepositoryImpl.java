@@ -33,10 +33,6 @@ public class TaskRepositoryImpl implements TaskRepository {
                 "t.category_id as categoryId, " +
                 "t.priority_id as priorityId, " +
                 "t.user_id as userId, " +
-                "p.title as titlePriority, " +
-                "c.title as titleCategory, " +
-                "u.login as loginUser, " +
-                "p.color as color, " +
                 "t.date as dateTask, " +
                 "t.title as title " +
                 "from task as t " +
@@ -59,10 +55,6 @@ public class TaskRepositoryImpl implements TaskRepository {
                 "t.category_id as categoryId, " +
                 "t.priority_id as priorityId, " +
                 "t.user_id as userId, " +
-                "p.title as titlePriority, " +
-                "c.title as titleCategory, " +
-                "u.login as loginUser, " +
-                "p.color as color, " +
                 "t.date as dateTask, " +
                 "t.title as title " +
                 "from task as t " +
@@ -143,10 +135,6 @@ public class TaskRepositoryImpl implements TaskRepository {
                 "t.category_id as categoryId, " +
                 "t.priority_id as priorityId, " +
                 "t.user_id as userId, " +
-                "p.title as titlePriority, " +
-                "c.title as titleCategory, " +
-                "u.login as loginUser, " +
-                "p.color as color, " +
                 "t.date as dateTask, " +
                 "t.title as title " +
                 "from task as t " +

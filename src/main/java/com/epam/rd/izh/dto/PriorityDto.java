@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 
 @Component
 @Builder

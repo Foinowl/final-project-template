@@ -21,9 +21,8 @@ $(document).ready( ()  => {
     })
 
 
-    var state = {
+    let state = {
         'querySet': tableData,
-
         'page': 1,
         'rows': 5,
         'window': 5,
@@ -33,12 +32,12 @@ $(document).ready( ()  => {
 
     function pagination(querySet, page, rows) {
 
-        var trimStart = state.querySet.length > rows ? (page - 1) * rows : 0
-        var trimEnd = trimStart + rows
+        const trimStart = state.querySet.length > rows ? (page - 1) * rows : 0
+        const trimEnd = trimStart + rows
 
-        var trimmedData = querySet.slice(trimStart, trimEnd)
+        const trimmedData = querySet.slice(trimStart, trimEnd)
 
-        var pages = Math.ceil(querySet.length / rows);
+        const pages = Math.ceil(querySet.length / rows);
 
         return {
             'querySet': trimmedData,
@@ -48,7 +47,8 @@ $(document).ready( ()  => {
 
     function pageButtons(pages) {
 
-        $('#pagination-wrapper').empty()
+        const selector = "#pagination-wrapper"
+        $(selector).empty()
 
         var maxLeft = (state.page - Math.floor(state.window / 2))
         var maxRight = (state.page + Math.floor(state.window / 2))
@@ -68,25 +68,25 @@ $(document).ready( ()  => {
         }
 
         for (var page = maxLeft; page <= maxRight; page++) {
-            $('#pagination-wrapper').append(
+            $(selector).append(
                 `<button data-buttonN=${page} value=${page} class="page">${page}</button>`
             )
         }
 
-        if (state.page != 1) {
-            $('#pagination-wrapper').prepend(
+        if (state.page !== 1) {
+            $(selector).prepend(
                 `<button value=${1} class="page">First</button>`
             )
         }
 
-        if (state.page != pages) {
-            $('#pagination-wrapper').append(
+        if (state.page !== pages) {
+            $(selector).append(
                 `<button value=${pages} class="page">Last</button>`
             )
         }
 
         $('.page').off("click")
-        $('.page').on('click', function(e) {
+        $('.page').on('click', function() {
             $('.table').empty()
 
             state.page = Number($(this).val())
@@ -114,61 +114,59 @@ $(document).ready( ()  => {
     openEls.each(function () {
         $(this).click(function () {
             const modalId = $(this).data("open");
-            $('#' + modalId).addClass(isVisible)
+            toggleClass("#"+modalId, isVisible)
         })
     })
 
     closeEls.each(function () {
         $(this).click(function () {
-            $($(this).parents().get(3)).removeClass(isVisible)
+            toggleClass($(this).parents().get(3), isVisible)
             clearEditTask()
         })
     })
 
     $(document).click(function (e) {
-        if (e.target == $(".modal.is-visible")[0]) {
-            $(".modal.is-visible").removeClass(isVisible)
+        if (e.target === $(".modal.is-visible")[0]) {
+            toggleClass(".modal.is-visible", isVisible)
             clearEditTask()
         }
     })
 
 
-    $("#createCategory").click(function (e) {
+    $("#createCategory").click(function () {
 
         const mapCategory = {
             idUser,
         }
 
-        $("#addCategory").find("input").each(function (index) {
+        $("#addCategory").find("input").each(function () {
             const name = $(this).data("input")
-            const value = $(this).val()
-            mapCategory[name] = value
+            mapCategory[name] = $(this).val()
         })
         sendDataCategory(mapCategory)
-        $(".modal.is-visible").removeClass(isVisible)
+        toggleClass(".modal.is-visible", isVisible)
     })
 
 
-    $("#createTask").click(function (e) {
+    $("#createTask").click(function () {
 
         const mapTask = {
             idUser,
         }
 
-        $("#addTask").find("input").each(function (index) {
+        $("#addTask").find("input").each(function () {
             const name = $(this).data("input")
             // const value = $(this).attr("type") === 'date' ? Date.parse($(this).val()) : $(this).val()
             const value = $(this).val()
             mapTask[name] = value
         })
 
-        $("#addTask").find("select").each(function (index) {
+        $("#addTask").find("select").each(function () {
             const name = $(this).data("input")
-            const value = $(this).val()
-            mapTask[name] = value
+            mapTask[name] = $(this).val()
         })
         sendDataTask(mapTask)
-        $(".modal.is-visible").removeClass(isVisible)
+        toggleClass(".modal.is-visible", isVisible)
     })
 
     $(document).on('click', "[data-task]", function (e) {
@@ -187,7 +185,6 @@ $(document).ready( ()  => {
         } catch (error) {
             type = "complete"
             const idCheckbox = $(this).attr("for")
-            console.log($("#"+idCheckbox).val())
             if (+$("#"+idCheckbox).val() === 0 ) {
                 valueComplete = 1
             } else {
@@ -245,7 +242,7 @@ $(document).ready( ()  => {
             }
         });
 
-        $(".modal.is-visible").removeClass(isVisible)
+        toggleClass(".modal.is-visible", isVisible)
         clearEditTask()
         changeRowTask(updateTask)
     })

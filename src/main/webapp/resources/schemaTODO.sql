@@ -15,7 +15,7 @@ CREATE TABLE i_user
     middle_name VARCHAR(40) NOT NULL,
     last_name   VARCHAR(40) NOT NULL,
     date_birth  DATE        NOT NULL,
-    login       VARCHAR(40) NOT NULL,
+    login       VARCHAR(40) NOT NULL UNIQUE,
     passwords   VARCHAR(80) NOT NULL,
     role_id     INT         NOT NULL,
 
@@ -37,13 +37,13 @@ DROP TABLE IF EXISTS category CASCADE;
 CREATE TABLE category
 (
     category_id       SERIAL,
-    title             VARCHAR(45) NOT NULL,
+    title             VARCHAR(45) NOT NULL UNIQUE,
     completed_count   bigint      NOT NULL DEFAULT 0,
     uncompleted_count bigint      NOT NULL DEFAULT 0,
     user_id           int,
 
     CONSTRAINT PK_category_category_id PRIMARY KEY (category_id),
-    CONSTRAINT FK_category_user_id foreign key (user_id) references i_user (user_id)
+    CONSTRAINT FK_category_user_id foreign key (user_id) references i_user (user_id) ON DELETE CASCADE
 
 );
 
@@ -56,7 +56,7 @@ CREATE TABLE stat
     user_id           int UNIQUE NOT NULL,
 
     CONSTRAINT PK_stat_stat_id PRIMARY KEY (stat_id),
-    CONSTRAINT FK_stat_user_id FOREIGN KEY (user_id) references i_user (user_id)
+    CONSTRAINT FK_stat_user_id FOREIGN KEY (user_id) references i_user (user_id) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS task CASCADE;

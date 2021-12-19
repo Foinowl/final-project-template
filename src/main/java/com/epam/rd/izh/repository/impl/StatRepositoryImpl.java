@@ -22,7 +22,6 @@ public class StatRepositoryImpl implements StatRepository {
                         "stat_id, " +
                         "completed_total, " +
                         "uncompleted_total, " +
-                        "u.login as login, " +
                         "stat.user_id as user_id " +
                         "from " +
                         "stat left join i_user " +

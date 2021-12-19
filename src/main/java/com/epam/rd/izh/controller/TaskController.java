@@ -80,10 +80,12 @@ public class TaskController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity delete(@PathVariable Long id) {
-        boolean response = taskService.deleteById(id);
-        if (response) {
-            return new ResponseEntity(response, HttpStatus.OK);
-        } else {
+
+        try {
+            boolean isDelete = taskService.deleteById(id);
+            return new ResponseEntity(isDelete, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
         }
     }
