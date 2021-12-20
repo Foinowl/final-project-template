@@ -1,5 +1,7 @@
 package com.epam.rd.izh.config;
 
+import com.epam.rd.izh.Model.PageImplBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration

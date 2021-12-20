@@ -25,23 +25,24 @@ button {
     color: #2c303a;
     height: 35px;
     border-radius: 2px;
-    padding: 0 10px;
+    padding: 10px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     transition: background 0.3s ease;
-    margin: 0 2px
+    text-align: center;
+    margin: 0 2px;
 }
 
 
 .page:first-of-type {
     margin-left: 0;
-    width: 55px !important;
+    width: 60px !important;
 
 }
 
 .page:last-of-type {
     margin-right: 0;
-    width: 55px !important;
+    width: 60px !important;
 }
 
 .page:not([class$="-page"]) {

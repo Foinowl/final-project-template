@@ -1,9 +1,13 @@
 package com.epam.rd.izh.service;
 
+import com.epam.rd.izh.Model.PageImplBean;
 import com.epam.rd.izh.dto.AuthorizedUserDto;
+import com.epam.rd.izh.dto.UserDto;
 import com.epam.rd.izh.entity.AuthorizedUser;
 import com.epam.rd.izh.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +57,7 @@ public class UserService {
         return AuthorizedUserDto.fromUser(userRepository.getUserByLogin(login));
     }
 
-    public List<AuthorizedUser> getAllAuthorizedUsers(String login)
+    public PageImplBean getAllUsers(String login, PageRequest paging)
             throws SecurityException{
         AuthorizedUserDto authorizedUserDto = getAuthorizedUserDto(login);
 
@@ -61,7 +65,7 @@ public class UserService {
             throw new SecurityException();
         }
 
-        return userRepository.getAllUsers();
+        return userRepository.getAllUsers(paging);
     }
 
     public boolean delete(@NotNull Long id) {

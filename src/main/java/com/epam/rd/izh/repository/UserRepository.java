@@ -1,8 +1,14 @@
 package com.epam.rd.izh.repository;
 
+import com.epam.rd.izh.Model.PageImplBean;
+import com.epam.rd.izh.dto.UserDto;
 import com.epam.rd.izh.entity.AuthorizedUser;
 import com.epam.rd.izh.mapper.UserMapper;
+import com.epam.rd.izh.util.StringConstants;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -10,6 +16,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class UserRepository {
@@ -78,7 +85,7 @@ public class UserRepository {
     return false;
   }
 
-  public List<AuthorizedUser> getAllUsers() {
+  public PageImplBean<UserDto> getAllUsers(Pageable pageable) {
     String sql = "select " +
             "us.user_id, " +
             "first_name, " +
@@ -90,8 +97,19 @@ public class UserRepository {
             "role.title from " +
             "i_user as us " +
             "left join role " +
-            "on us.role_id = role.role_id";
-    return jdbcTemplate.query(sql, userMapper);
+            "on us.role_id = role.role_id " +
+            "order by us.user_id asc " +
+//            "order by ? ? " +
+            "limit ? offset ?";
+
+//    String orderCol = pageable.getSort().getOrderFor(StringConstants.USER_SORT_BY_COL).getProperty();
+//    String dir = pageable.getSort().getOrderFor(StringConstants.USER_SORT_BY_COL).getDirection().name();
+    Integer limit = pageable.getPageNumber() * pageable.getPageSize();
+
+    List<UserDto> list = jdbcTemplate.query(sql, new Object[]{pageable.getPageSize(), limit},userMapper).stream().map(UserDto::fromAuthorizedUser).collect(Collectors.toList());
+
+    PageImplBean<UserDto> page = new PageImplBean<>(new PageImpl<>(list, pageable, count()));
+    return page;
   }
 
   public boolean deleteUser(long idUser){
@@ -100,5 +118,9 @@ public class UserRepository {
     return jdbcTemplate.update(
             sql, idUser
     ) > 0;
+  }
+
+  private int count() {
+    return jdbcTemplate.queryForObject("SELECT count(*) FROM i_user", Integer.class);
   }
 }

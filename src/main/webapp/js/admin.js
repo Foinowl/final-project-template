@@ -8,8 +8,8 @@ $(document).ready(() => {
             async: false,
             dataType: 'json',
             success: function (data) {
-                $(".table").find(`[data-user=${userId}]`).remove()
-                alert("delete user by Id - " + userId)
+                // $(".table").find(`[data-user=${userId}]`).remove()
+                location.reload();
             },
             error: function (error) {
                 alert(error)

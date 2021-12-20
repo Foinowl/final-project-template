@@ -13,6 +13,9 @@ public class StringConstants {
 
   public static final String RUS_GREETING = "Привет, ";
   public static final String ENG_GREETING = "Hello, ";
+  public static final Integer PER_PAGE_SIZE = 5;
+  public static final Integer DEFAULT_PAGE = 1;
+  public static final String USER_SORT_BY_COL = "user_id";
 
   public static Map<String, String> mapUrl;
 

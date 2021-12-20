@@ -4,6 +4,7 @@ import com.epam.rd.izh.dto.TaskDto;
 import com.epam.rd.izh.entity.Task;
 import com.epam.rd.izh.service.TaskService;
 import com.epam.rd.izh.service.UserService;
+import com.epam.rd.izh.util.SecurityUtil;
 import com.epam.rd.izh.validations.ResponseErrorValidation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,10 +35,14 @@ public class TaskController {
         try {
             return ResponseEntity.ok(
                     taskService
-                            .findAllTaskByUserId(Long.parseLong(id))
-                            .stream()
-                            .map(TaskDto::fromTask)
-                            .collect(Collectors.toList())
+                            .findAllTaskByUserId(
+                                    userService
+                                            .getUserIdByLogin(
+                                                    SecurityUtil
+                                                            .getCurrentUser()
+                                                            .getUsername()
+                                            )
+                            )
             );
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,7 +56,7 @@ public class TaskController {
         ResponseEntity<Object> errors = responseErrorValidation.mapValidationService(bindingResult);
         if (!ObjectUtils.isEmpty(errors)) return errors;
         try {
-            return ResponseEntity.ok(TaskDto.fromTask(taskService.add(task)));
+            return ResponseEntity.ok(taskService.add(task));
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity("something wrong on the bd side", HttpStatus.NOT_ACCEPTABLE);
@@ -67,9 +72,9 @@ public class TaskController {
             boolean complete = task.getCompleted() != null;
 
             if (!complete) {
-                return new ResponseEntity(TaskDto.fromTask(taskService.update(task)), HttpStatus.OK);
+                return new ResponseEntity(taskService.update(task), HttpStatus.OK);
             } else {
-                return new ResponseEntity(TaskDto.fromTask(taskService.updateByCompleted(task)), HttpStatus.OK);
+                return new ResponseEntity(taskService.updateByCompleted(task), HttpStatus.OK);
             }
 
         } catch (Exception e) {
@@ -93,7 +98,7 @@ public class TaskController {
     @GetMapping("/id/{id}")
     public ResponseEntity<TaskDto> findById(@PathVariable Long id) {
 
-        Task task = null;
+        TaskDto task = null;
 
         try {
             task = taskService.findById(id);
@@ -102,6 +107,6 @@ public class TaskController {
             return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return ResponseEntity.ok(TaskDto.fromTask(task));
+        return ResponseEntity.ok(task);
     }
 }

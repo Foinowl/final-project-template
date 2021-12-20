@@ -37,7 +37,7 @@ DROP TABLE IF EXISTS category CASCADE;
 CREATE TABLE category
 (
     category_id       SERIAL,
-    title             VARCHAR(45) NOT NULL UNIQUE,
+    title             VARCHAR(45) NOT NULL,
     completed_count   bigint      NOT NULL DEFAULT 0,
     uncompleted_count bigint      NOT NULL DEFAULT 0,
     user_id           int,
