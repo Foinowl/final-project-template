@@ -16,6 +16,7 @@ import java.time.LocalDate;
 @Data
 public class UserDto {
     private Long id;
+    private String login;
     private String firstName;
     private String middleName;
     private String lastName;
@@ -24,6 +25,7 @@ public class UserDto {
     public static  UserDto fromAuthorizedUser(AuthorizedUser user) {
         return UserDto.builder()
                 .id(user.getId())
+                .login(user.getLogin())
                 .firstName(user.getFirstName())
                 .middleName(user.getMiddleName())
                 .lastName(user.getLastName())

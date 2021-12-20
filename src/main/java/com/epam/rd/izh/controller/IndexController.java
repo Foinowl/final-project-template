@@ -1,13 +1,12 @@
 package com.epam.rd.izh.controller;
 
-import com.epam.rd.izh.Model.PageImplBean;
+import com.epam.rd.izh.model.PageImplBean;
 import com.epam.rd.izh.dto.*;
 import com.epam.rd.izh.service.*;
 import com.epam.rd.izh.util.SecurityUtil;
 import com.epam.rd.izh.util.StringConstants;
 import com.epam.rd.izh.util.UtilMethod;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;

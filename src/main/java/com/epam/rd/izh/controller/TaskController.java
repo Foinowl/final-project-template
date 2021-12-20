@@ -30,8 +30,8 @@ public class TaskController {
         this.userService = userService;
     }
 
-    @GetMapping("/all/user/{id}")
-    public ResponseEntity<List<TaskDto>> findAll(@PathVariable String id) {
+    @GetMapping("/all")
+    public ResponseEntity<List<TaskDto>> findAll() {
         try {
             return ResponseEntity.ok(
                     taskService

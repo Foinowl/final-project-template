@@ -76,8 +76,7 @@ public class TaskService {
     }
 
     private TaskDto toTaskDto(Task task) {
-        TaskDto taskDto = TaskDto.fromTask(task);
-        taskDto.setLoginUser(SecurityUtil.getCurrentUser().getUsername());
+        TaskDto taskDto = setParam(TaskDto.fromTask(task));
         return taskDto;
     }
 

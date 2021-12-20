@@ -1,12 +1,10 @@
 package com.epam.rd.izh.repository;
 
-import com.epam.rd.izh.Model.PageImplBean;
+import com.epam.rd.izh.model.PageImplBean;
 import com.epam.rd.izh.dto.UserDto;
 import com.epam.rd.izh.entity.AuthorizedUser;
 import com.epam.rd.izh.mapper.UserMapper;
-import com.epam.rd.izh.util.StringConstants;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -56,9 +54,10 @@ public class UserRepository {
   }
 
   public long getUserIdByLogin(@Nonnull String login) {
-    String query_getAuthorizedUserByLogin = "SELECT u.id from i_user as u left join role on role.role_id = u.role_id where u.login = ?";
+    String sql = "" +
+            "SELECT u.user_id from i_user as u left join role on role.role_id = u.role_id where u.login = ?";
 
-    return jdbcTemplate.queryForObject(query_getAuthorizedUserByLogin, new Object[]{login}, Long.class);
+    return jdbcTemplate.queryForObject(sql, new Object[]{login}, Long.class);
   }
 
   public boolean addUser(@Nullable AuthorizedUser user) {

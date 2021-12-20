@@ -88,7 +88,7 @@
                     <li class=""><a href="#">About</a></li>
                     <li>
                         <div class="header__user">
-                            <span class="header__user-name" data-userId="${user.id}"
+                            <span class="header__user-name""
                                   data-userLogin="${user.login}">${user.login}</span>
                             <span class="header__arrow">
 										<i class="fas fa-arrow-down"></i>

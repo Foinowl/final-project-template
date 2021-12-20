@@ -56,47 +56,6 @@ public class CategoryController {
         }
     }
 
-    @PutMapping("/update")
-    public ResponseEntity update(@RequestBody CategoryDto category, BindingResult bindingResult) {
-        ResponseEntity<Object> errors = responseErrorValidation.mapValidationService(bindingResult);
-        if (!ObjectUtils.isEmpty(errors)) return errors;
-
-        try{
-            return ResponseEntity.ok(categoryService.update(category));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity("something wrong on the bd side", HttpStatus.NOT_ACCEPTABLE);
-        }
-    }
-
-
-    @GetMapping("/id/{id}")
-    public ResponseEntity<CategoryDto> findById(@PathVariable Long id) {
-
-        CategoryDto category = null;
-
-        try{
-            category = categoryService.findById(id);
-        }catch (NoSuchElementException e){
-            e.printStackTrace();
-            return new ResponseEntity("id="+id+" not found", HttpStatus.NOT_ACCEPTABLE);
-        }
-
-        return  ResponseEntity.ok(category);
-    }
-
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity delete(@PathVariable Long id) {
-
-        try {
-            categoryService.deleteById(id);
-        }catch (EmptyResultDataAccessException e){
-            e.printStackTrace();
-            return new ResponseEntity("id="+id+" not found", HttpStatus.NOT_ACCEPTABLE);
-        }
-        return new ResponseEntity(HttpStatus.OK);
-    }
-
     @PostMapping("/search")
     public ResponseEntity<List<CategoryDto>> search(@RequestBody CategorySearchDto categorySearchDto){
         try {

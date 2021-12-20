@@ -1,10 +1,9 @@
-package com.epam.rd.izh.Model;
+package com.epam.rd.izh.model;
 
 
 import com.epam.rd.izh.dto.UserDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.domain.*;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;

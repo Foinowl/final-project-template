@@ -3,13 +3,12 @@ const isVisible = "is-visible"
 $(document).ready( ()  => {
     const openEls = $("[data-open]")
     const closeEls = $("[data-close]")
-    const idUser = $("[data-userId]").data("userid")
     const loginUser = $("[data-userLogin]").data("userlogin")
 
     const {responseJSON: tableData} = $.ajax({
         type: "GET",
         contentType: "application/json",
-        url: "/task/all/user/"+idUser,
+        url: "/task/all",
         async:false,
         dataType: 'json',
         success: function (data) {
@@ -136,7 +135,6 @@ $(document).ready( ()  => {
     $("#createCategory").click(function () {
 
         const mapCategory = {
-            idUser,
         }
 
         $("#addCategory").find("input").each(function () {
@@ -151,7 +149,6 @@ $(document).ready( ()  => {
     $("#createTask").click(function () {
 
         const mapTask = {
-            idUser,
         }
 
         $("#addTask").find("input").each(function () {
@@ -198,9 +195,9 @@ $(document).ready( ()  => {
             deleteTaskById(idTask, state.querySet)
         } else if (type === "edit") {
 
-            updateTaskById(idTask, idUser)
+            updateTaskById(idTask)
         } else if (type === "complete") {
-            updateTaskComplete({id : idTask, idUser, completed: valueComplete})
+            updateTaskComplete({id : idTask, completed: valueComplete})
         }
 
     })
@@ -210,7 +207,6 @@ $(document).ready( ()  => {
         e.preventDefault();
         e.stopPropagation()
         const mapTask = {
-            idUser,
             id: +$(this).attr("data-editBtn")
         }
 
@@ -244,6 +240,7 @@ $(document).ready( ()  => {
 
         toggleClass(".modal.is-visible", isVisible)
         clearEditTask()
+        console.log("change")
         changeRowTask(updateTask)
     })
 
@@ -331,7 +328,8 @@ function sendDataCategory(mapCategory) {
         data: JSON.stringify(mapCategory),
         dataType: 'json',
         success: function (data) {
-            generateTemplateCategory(data)
+            location.reload()
+            // generateTemplateCategory(data)
         },
         error: function (error) {
             alert(error)
@@ -401,12 +399,12 @@ function generateTemplateTask(taskDto) {
     )
 }
 
-function updateTaskById(idTask, idUser) {
+function updateTaskById(idTask) {
 
     const {responseJSON: categoryList} = $.ajax({
         type: "GET",
         contentType: "application/json",
-        url: '/category/all/user/' + idUser,
+        url: '/category/all',
         async: false,
         dataType: 'json',
         success: function (data) {
@@ -454,7 +452,7 @@ function renderModalEditTask(categoryList, priorityList, task) {
 
     $("#editTask").addClass(isVisible)
 
-    $("#editTask").find("select").each(function (index) {
+    $("#editTask").find("select").each(function () {
 
         let optionString = '';
         let data = null;
@@ -470,7 +468,6 @@ function renderModalEditTask(categoryList, priorityList, task) {
             ele = $('*[data-input="idPriority"]')
             inputTitle = task.titlePriority
         }
-
         data.forEach(function (item, index) {
             optionString += item.title === inputTitle ?
                 '<option value="' + item.id + '" selected="true">' + item.title + '</option>'
@@ -505,6 +502,7 @@ function clearEditTask() {
 function changeRowTask(updateTask) {
     const listElement = ["id", "title", "date", "titlePriority", "titleCategory"]
 
+    console.log("changeRowTask", updateTask)
     $("#taskId" + updateTask.id)
         .find("[data-color]")
         .css({"background-color": `${updateTask.color}`})

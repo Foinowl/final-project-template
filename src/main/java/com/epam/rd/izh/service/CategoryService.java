@@ -44,11 +44,12 @@ public class CategoryService {
     }
 
     public List<CategoryDto> findByTitle(String text) {
-        return toCategoryDtoList(repository.findByTitle(text));
-    }
-
-    public CategoryDto findById(Long id) {
-        return toCategoryDto(repository.findById(id));
+        AuthorizedUser user = userRepository.getUserByLogin(SecurityUtil.getCurrentUser().getUsername());
+        List<Category> categoryList = repository.findByTitle(text)
+                .stream()
+                .filter(category -> Objects.equals(category.getIdUser(), user.getId()))
+                .collect(Collectors.toList());
+        return toCategoryDtoList(categoryList);
     }
 
     private Category fromCategoryDto(CategoryDto category) {

@@ -1,20 +1,16 @@
 package com.epam.rd.izh.service;
 
-import com.epam.rd.izh.Model.PageImplBean;
+import com.epam.rd.izh.model.PageImplBean;
 import com.epam.rd.izh.dto.AuthorizedUserDto;
-import com.epam.rd.izh.dto.UserDto;
 import com.epam.rd.izh.entity.AuthorizedUser;
 import com.epam.rd.izh.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
