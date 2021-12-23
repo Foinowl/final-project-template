@@ -44,29 +44,30 @@
                     <!-- виртуальная категория 'Все'-->
                     <li class="nav-item category">
                         <a class="nav-link">
-                            <!--          название категории-->
                             <span class="category-title" style="width: 85%">Все</span>
-                            <!--сколько невыполненных задач-->
                             <div style="display: inline-block;">
                                 <span style="background-color: #eaeaea"
-                                      class="completed-count">${categoryList.size()}</span>
+                                      id="sizeCategory"
+                                      class="completed-count">${categoryList.size()}
+                                </span>
                             </div>
                         </a>
                     </li>
                     <div class="line"></div>
 
-                    <!-- <div">
-                        <p class="not-found">Ничего не найдено</p>
-                    </div> -->
+                    <c:if test="${categotyList.size() le 0}">
+                        <div>
+                            <p class="not-found">Ничего не найдено</p>
+                        </div>
+                    </c:if>
 
                     <li class="nav-item category" id="listCategory" style="padding-bottom: 65px;">
                         <c:forEach var="category" items="${categoryList}">
-                            <a class="nav-link">
+                            <a class="nav-link" id="${category.title}">
                                 <!--          название категории-->
                                 <span class="category-title">${category.title}</span>
 
-                                    <%--                                <!--         кнопка редактирования категории-->--%>
-                                    <%--                                <span class="edit-category-icon-area"> </span>--%>
+                                <span class="edit-category-icon-area"> </span>
 
                                 <div style="display: inline-block;">
                                     <span class="completed-count">${category.completedCount}</span>
@@ -88,7 +89,7 @@
                     <li class=""><a href="#">About</a></li>
                     <li>
                         <div class="header__user">
-                            <span class="header__user-name""
+                            <span class="header__user-name"
                                   data-userLogin="${user.login}">${user.login}</span>
                             <span class="header__arrow">
 										<i class="fas fa-arrow-down"></i>
@@ -107,14 +108,14 @@
             <div class="common-stat">
                 <div class="stat__card">
                     <div class="card-header">
-                        <h3>${stat.completedTotal}</h3>
+                        <h3 id="completedTotal">${stat.completedTotal}</h3>
                     </div>
                     <div class="line"></div>
                     <div class="footer card-footer">Завершенные задачи</div>
                 </div>
                 <div class="stat__card">
                     <div class="card-header">
-                        <h3>${stat.uncompletedTotal}</h3>
+                        <h3 id="uncompletedTotal">${stat.uncompletedTotal}</h3>
                     </div>
                     <div class="line"></div>
 
@@ -122,7 +123,7 @@
                 </div>
                 <div class="stat__card">
                     <div class="card-header">
-                        <h3>${Math.round((stat.completedTotal / taskList.size())* 100)}%</h3>
+                        <h3 id="percentCompleted">${Math.round((stat.completedTotal / taskList.size())* 100)}%</h3>
                     </div>
                     <div class="line"></div>
 
@@ -130,7 +131,7 @@
                 </div>
                 <div class="stat__card">
                     <div class="card-header">
-                        <h3>${Math.round((stat.uncompletedTotal / taskList.size()) * 100)}%</h3>
+                        <h3 id="percentUncompleted">${Math.round((stat.uncompletedTotal / taskList.size()) * 100)}%</h3>
                     </div>
                     <div class="line"></div>
 
@@ -142,7 +143,7 @@
                 <button class="create-button" data-open="addTask">
                     Добавить задачу
                 </button>
-                <span class="founded">Найдено задач: ${taskList.size()}</span>
+                <span class="founded" id="foundedTask">Найдено задач: ${taskList.size()}</span>
             </div>
 
 
@@ -162,6 +163,12 @@
                         <div class="col col-8"></div>
                         <div class="col col-9"></div>
                     </li>
+
+                    <c:if test="${taskList.size() le 0}">
+                        <div>
+                            <p class="not-found">Ничего не найдено</p>
+                        </div>
+                    </c:if>
 
                     <%--                    <c:forEach var="task" items="${taskList}">--%>
                     <%--                        <li class="table-row" id="taskId${task.id}">--%>

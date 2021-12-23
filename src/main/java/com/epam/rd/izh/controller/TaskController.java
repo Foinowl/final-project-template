@@ -95,7 +95,7 @@ public class TaskController {
         }
     }
 
-    @GetMapping("/id/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<TaskDto> findById(@PathVariable Long id) {
 
         TaskDto task = null;

@@ -1,15 +1,16 @@
 const isVisible = "is-visible"
 
-$(document).ready( ()  => {
+$(document).ready(() => {
     const openEls = $("[data-open]")
     const closeEls = $("[data-close]")
     const loginUser = $("[data-userLogin]").data("userlogin")
+    const foundedTask = $("#foundedTask")
 
     const {responseJSON: tableData} = $.ajax({
         type: "GET",
         contentType: "application/json",
         url: "/task/all",
-        async:false,
+        async: false,
         dataType: 'json',
         success: function (data) {
             return data
@@ -19,13 +20,21 @@ $(document).ready( ()  => {
         }
     })
 
-
     let state = {
         'querySet': tableData,
         'page': 1,
         'rows': 5,
         'window': 5,
     }
+
+    const totalStat = {
+        completed: $("#completedTotal"),
+        uncompleted: $("#uncompletedTotal"),
+        percentCompleted: $("#percentCompleted"),
+        percentUncompleted: $("#percentUncompleted"),
+        tableData
+    }
+
 
     buildTable()
 
@@ -60,7 +69,7 @@ $(document).ready( ()  => {
         if (maxRight > pages) {
             maxLeft = pages - (state.window - 1)
 
-            if (maxLeft < 1){
+            if (maxLeft < 1) {
                 maxLeft = 1
             }
             maxRight = pages
@@ -85,7 +94,7 @@ $(document).ready( ()  => {
         }
 
         $('.page').off("click")
-        $('.page').on('click', function() {
+        $('.page').on('click', function () {
             $('.table').empty()
 
             state.page = Number($(this).val())
@@ -113,7 +122,7 @@ $(document).ready( ()  => {
     openEls.each(function () {
         $(this).click(function () {
             const modalId = $(this).data("open");
-            toggleClass("#"+modalId, isVisible)
+            toggleClass("#" + modalId, isVisible)
         })
     })
 
@@ -134,8 +143,7 @@ $(document).ready( ()  => {
 
     $("#createCategory").click(function () {
 
-        const mapCategory = {
-        }
+        const mapCategory = {}
 
         $("#addCategory").find("input").each(function () {
             const name = $(this).data("input")
@@ -148,12 +156,10 @@ $(document).ready( ()  => {
 
     $("#createTask").click(function () {
 
-        const mapTask = {
-        }
+        const mapTask = {}
 
         $("#addTask").find("input").each(function () {
             const name = $(this).data("input")
-            // const value = $(this).attr("type") === 'date' ? Date.parse($(this).val()) : $(this).val()
             const value = $(this).val()
             mapTask[name] = value
         })
@@ -164,6 +170,9 @@ $(document).ready( ()  => {
         })
         sendDataTask(mapTask)
         toggleClass(".modal.is-visible", isVisible)
+        totalStat.tableData = state.querySet
+        changeTotalStat(totalStat, "uncompleted", 1)
+        foundedTask.text("Найдено задач: " + (+foundedTask.text().slice(-1)+1))
     })
 
     $(document).on('click', "[data-task]", function (e) {
@@ -182,26 +191,33 @@ $(document).ready( ()  => {
         } catch (error) {
             type = "complete"
             const idCheckbox = $(this).attr("for")
-            if (+$("#"+idCheckbox).val() === 0 ) {
+            if (+$("#" + idCheckbox).val() === 0) {
                 valueComplete = 1
+                totalStat.completed.text(+totalStat.completed.text() + 1)
+                totalStat.uncompleted.text(+totalStat.uncompleted.text() - 1)
+                changeTotalStat(totalStat, null, null)
+
             } else {
                 valueComplete = 0
-            }
-            $("#"+idCheckbox).val(valueComplete)
+                totalStat.completed.text(+totalStat.completed.text() - 1)
+                totalStat.uncompleted.text(+totalStat.uncompleted.text() + 1)
 
+                changeTotalStat(totalStat, null, null)
+            }
+            $("#" + idCheckbox).val(valueComplete)
         }
 
         if (type === "trash") {
             deleteTaskById(idTask, state.querySet)
+            foundedTask.text("Найдено задач: " + (+foundedTask.text().slice(-1)-1))
         } else if (type === "edit") {
-
             updateTaskById(idTask)
         } else if (type === "complete") {
-            updateTaskComplete({id : idTask, completed: valueComplete})
+            updateTaskComplete({id: idTask, completed: valueComplete})
+
         }
 
     })
-
 
     $("[data-editBtn]").click(function (e) {
         e.preventDefault();
@@ -209,7 +225,6 @@ $(document).ready( ()  => {
         const mapTask = {
             id: +$(this).attr("data-editBtn")
         }
-
 
         $("#editTask").find("input").each(function (index) {
             const name = $(this).data("input")
@@ -223,6 +238,8 @@ $(document).ready( ()  => {
             mapTask[name] = +value
         })
 
+        const task = getTaskById(mapTask.id)
+
         const {responseJSON: updateTask} = $.ajax({
             type: "PUT",
             contentType: "application/json",
@@ -231,6 +248,11 @@ $(document).ready( ()  => {
             dataType: 'json',
             async: false,
             success: function (data) {
+                if (data.titleCategory !== task.titleCategory) {
+                    changeCategoryStat(task, task.completed === 1, true)
+                }
+
+                changeCategoryStat(data, data.completed === 1)
                 return data
             },
             error: function (error) {
@@ -255,6 +277,8 @@ $(document).ready( ()  => {
     }
 
     function deleteTaskById(id, query) {
+        const task = getTaskById(id)
+
         const {responseJSON: isDelete} = $.ajax({
             type: "DELETE",
             contentType: "application/json",
@@ -271,8 +295,19 @@ $(document).ready( ()  => {
         });
 
         state.querySet = query.filter(el => el.id !== id)
+        totalStat.tableData = state.querySet
+
+        if (task.completed === 0) {
+            changeTotalStat(totalStat, "uncompleted", -1)
+            changeCategoryStat(task, false)
+        } else {
+            changeCategoryStat(task, true)
+            changeTotalStat(totalStat, "completed", -1)
+        }
+
         $('.table').empty()
         buildTable()
+
     }
 
     function sendDataTask(mapTask) {
@@ -285,6 +320,7 @@ $(document).ready( ()  => {
             dataType: 'json',
             success: function (data) {
                 state.querySet.push(data)
+                changeCategoryStat(data, false)
                 $('.table').empty()
                 buildTable()
             },
@@ -294,7 +330,7 @@ $(document).ready( ()  => {
         });
     }
 
-    $("#searchCategory").submit(function (e){
+    $("#searchCategory").submit(function (e) {
         e.preventDefault()
         const text = $($(this).children().get(0)).val()
         const obj = {
@@ -319,6 +355,24 @@ $(document).ready( ()  => {
         date.forEach(el => generateTemplateCategory(el))
     })
 })
+
+function getTaskById(id){
+    const {responseJSON: task} = $.ajax({
+        type: "GET",
+        contentType: "application/json",
+        url: '/task/' + id,
+        async: false,
+        dataType: 'json',
+        success: function (data) {
+            return data;
+        },
+        error: function (error) {
+            console.log("ERRROR:", error)
+            alert(error)
+        }
+    })
+    return task;
+}
 
 function sendDataCategory(mapCategory) {
     $.ajax({
@@ -355,7 +409,6 @@ function generateTemplateCategory(categoryDto) {
 }
 
 function generateTemplateTask(taskDto) {
-    console.log(taskDto)
     const Item = (task) => `
                         <li class="table-row" id="taskId${task.id}" data-task="${task.id}">
                             <div
@@ -429,20 +482,8 @@ function updateTaskById(idTask) {
         }
     });
 
+    const task = getTaskById(idTask)
 
-    const {responseJSON: task} = $.ajax({
-        type: "GET",
-        contentType: "application/json",
-        url: '/task/id/' + idTask,
-        dataType: 'json',
-        async: false,
-        success: function (data) {
-            return data
-        },
-        error: function (error) {
-            console.log("ERRROR:", error)
-        }
-    });
 
     renderModalEditTask(categoryList, priorityList, task)
 }
@@ -513,8 +554,7 @@ function changeRowTask(updateTask) {
     )
 }
 
-function  updateTaskComplete({...mapTask}) {
-    console.log(JSON.stringify(mapTask))
+function updateTaskComplete({...mapTask}) {
     $.ajax({
         type: "PUT",
         contentType: "application/json",
@@ -523,10 +563,66 @@ function  updateTaskComplete({...mapTask}) {
         data: JSON.stringify(mapTask),
         async: false,
         success: function (data) {
+            changeCategoryStat(data, data.completed === 1)
             return data
         },
         error: function (error) {
             console.log("ERRROR:", error)
         }
     });
+}
+
+// const totalStat = {
+//     completedTotal: $("#completedTotal"),
+//     uncompletedTotal: $("#uncompletedTotal"),
+//     percentCompleted: $("#percentCompleted"),
+//     percentUncompleted: $("#percentUncompleted"),
+//     tableData
+// }
+
+
+function changeTotalStat(mapStat, key, delta) {
+    if (key !== null) {
+        mapStat[key].text(+mapStat[key].text() + delta)
+
+    }
+
+    const valueCompleted = +mapStat.completed.text()
+    const valueUncompleted = +mapStat.uncompleted.text()
+
+    const length = mapStat.tableData.length
+
+    mapStat.percentCompleted.text(Math.round((valueCompleted / length) * 100)+"%")
+    mapStat.percentUncompleted.text(Math.round((valueUncompleted / length) * 100)+"%")
+}
+
+function changeCategoryStat(task, completed, changeCategory = false) {
+    const el = $("#"+task.titleCategory)
+    const completedEl = el.find(".completed-count")
+    const uncompletedEl = el.find(".uncompleted-count")
+
+    console.log("completedEl", completedEl)
+
+    if (changeCategory && completed) {
+        completedEl.text(+completedEl.text()-1)
+        return;
+    }
+
+    if (changeCategory && !completed) {
+        uncompletedEl.text(+uncompletedEl.text()-1)
+        return;
+    }
+
+    if (+completedEl.text() === 0 && !completed ) {
+        uncompletedEl.text(+uncompletedEl.text()+1)
+        return;
+    }
+
+    if (completed) {
+        completedEl.text(+completedEl.text()+1)
+        uncompletedEl.text(+uncompletedEl.text()-1)
+    } else {
+        completedEl.text(+completedEl.text()-1)
+        uncompletedEl.text(+uncompletedEl.text()+1)
+    }
 }
