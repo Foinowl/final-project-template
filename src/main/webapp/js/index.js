@@ -17,6 +17,7 @@ $(document).ready(() => {
         },
         error: function (error) {
             alert(error)
+            console.log("Error:", error)
         }
     })
 
@@ -168,11 +169,14 @@ $(document).ready(() => {
             const name = $(this).data("input")
             mapTask[name] = $(this).val()
         })
-        sendDataTask(mapTask)
+        const isSend = sendDataTask(mapTask)
         toggleClass(".modal.is-visible", isVisible)
         totalStat.tableData = state.querySet
-        changeTotalStat(totalStat, "uncompleted", 1)
-        foundedTask.text("Найдено задач: " + (+foundedTask.text().slice(-1)+1))
+        if(isSend) {
+            changeTotalStat(totalStat, "uncompleted", 1)
+            foundedTask.text("Найдено задач: " + (+foundedTask.text().slice(-1)+1))
+        }
+
     })
 
     $(document).on('click', "[data-task]", function (e) {
@@ -256,7 +260,8 @@ $(document).ready(() => {
                 return data
             },
             error: function (error) {
-                console.log("ERRROR:", error)
+                alert(error)
+                console.log("Error:", error)
             }
         });
 
@@ -290,7 +295,7 @@ $(document).ready(() => {
             },
             error: function (error) {
                 console.log("ERRROR:", error)
-                alert(error)
+                alert(error.responseText)
             }
         });
 
@@ -299,10 +304,10 @@ $(document).ready(() => {
 
         if (task.completed === 0) {
             changeTotalStat(totalStat, "uncompleted", -1)
-            changeCategoryStat(task, false)
+            changeCategoryStat(task, false, true)
         } else {
-            changeCategoryStat(task, true)
             changeTotalStat(totalStat, "completed", -1)
+            changeCategoryStat(task, true, true)
         }
 
         $('.table').empty()
@@ -323,9 +328,12 @@ $(document).ready(() => {
                 changeCategoryStat(data, false)
                 $('.table').empty()
                 buildTable()
+                return true;
             },
             error: function (error) {
-                alert(error)
+                alert(error.responseText)
+                console.log("ERRROR:", error)
+                return false;
             }
         });
     }
@@ -348,7 +356,9 @@ $(document).ready(() => {
                 return data;
             },
             error: function (error) {
-                alert(error)
+                alert(error.responseText)
+                console.log("ERRROR:", error)
+
             }
         });
         $('#listCategory').empty()
@@ -368,7 +378,7 @@ function getTaskById(id){
         },
         error: function (error) {
             console.log("ERRROR:", error)
-            alert(error)
+            alert(error.responseText)
         }
     })
     return task;
@@ -386,7 +396,9 @@ function sendDataCategory(mapCategory) {
             // generateTemplateCategory(data)
         },
         error: function (error) {
-            alert(error)
+            alert(error.responseText)
+            console.log("ERRROR:", error)
+
         }
     });
 }
@@ -464,6 +476,7 @@ function updateTaskById(idTask) {
             return data
         },
         error: function (error) {
+            alert(error.responseText)
             console.log("ERRROR:", error)
         }
     });
@@ -479,6 +492,7 @@ function updateTaskById(idTask) {
         },
         error: function (error) {
             console.log("ERRROR:", error)
+            alert(error.responseText)
         }
     });
 
@@ -567,6 +581,7 @@ function updateTaskComplete({...mapTask}) {
             return data
         },
         error: function (error) {
+            alert(error.responseText)
             console.log("ERRROR:", error)
         }
     });
@@ -592,16 +607,18 @@ function changeTotalStat(mapStat, key, delta) {
 
     const length = mapStat.tableData.length
 
-    mapStat.percentCompleted.text(Math.round((valueCompleted / length) * 100)+"%")
-    mapStat.percentUncompleted.text(Math.round((valueUncompleted / length) * 100)+"%")
+    console.log("valueCompleted", valueCompleted)
+    console.log("valueUncompleted", valueUncompleted)
+    console.log("length", length)
+
+    mapStat.percentCompleted.text((Math.round((valueCompleted / length) * 100) || 0)+"%")
+    mapStat.percentUncompleted.text((Math.round((valueUncompleted / length) * 100)||0)+"%")
 }
 
 function changeCategoryStat(task, completed, changeCategory = false) {
     const el = $("#"+task.titleCategory)
     const completedEl = el.find(".completed-count")
     const uncompletedEl = el.find(".uncompleted-count")
-
-    console.log("completedEl", completedEl)
 
     if (changeCategory && completed) {
         completedEl.text(+completedEl.text()-1)
