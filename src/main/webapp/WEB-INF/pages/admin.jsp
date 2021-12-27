@@ -47,9 +47,6 @@
     <section class="main">
 
         <div class="row">
-            <button class="create-button" data-open="addTask">
-                Добавить юзера
-            </button>
             <span class="founded">Найдено пользователей: ${userPage.content.size()}</span>
         </div>
 
